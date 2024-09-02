@@ -12,6 +12,7 @@ Employee ApplyLeave Page:
 <img width="946" alt="applyLeave" src="https://github.com/user-attachments/assets/99d9a9df-3604-42f9-b60e-868a1970e125">
 
 Employee Profile Page :
+
 <img width="440" alt="profile" src="https://github.com/user-attachments/assets/941603c6-5292-4d57-b475-fdcb901094d6">
 
 Team Leave Summary
@@ -28,4 +29,5 @@ Validations :
 ![Screenshot 2024-09-02 122500](https://github.com/user-attachments/assets/be55571a-f8d0-492a-85c2-5a8a1718ca0b)
 
 3.Validation For Weekend Date:
+
 <img width="434" alt="validationForWeekends" src="https://github.com/user-attachments/assets/58e5cbcc-8b4c-484a-81ad-fe13811438ca">
