@@ -25,7 +25,7 @@ Validations :
 <img width="515" alt="validationForPastTime" src="https://github.com/user-attachments/assets/13abac79-8b36-4f0a-af78-254d6e70cf8d">
 
 2. Validation For TotalLeaves:
-![Screenshot 2024-09-02 122500](https://github.com/user-attachments/assets/be55571a-f8d0-492a-85c2-5a8a1718ca0b)
+<img width="450" alt="validationForTotalLeaves" src="https://github.com/user-attachments/assets/f821185a-2d77-45b5-9159-e9d739041bc5">
 
 3.Validation For Weekend Date:
 
