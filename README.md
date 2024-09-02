@@ -1,4 +1,4 @@
-<img width="949" alt="EmployeeLeaveSummary" src="https://github.com/user-attachments/assets/42109b4b-1416-4bed-887a-e80a0605e3c7">﻿# LeaveManagement-App
+
 Login Page:
 ![LoginPage](https://github.com/user-attachments/assets/7a2c4173-90ea-4d16-afb1-be4d2ffd4e1d)
 Employee Leave Summary Page:
@@ -11,6 +11,7 @@ Employee ApplyLeave Page:
 <img width="914" alt="applyLeave" src="https://github.com/user-attachments/assets/63a119fd-9c6a-4dbb-9653-86eea0fb08a4">
 
 Employee Profile Page :
+
 <img width="320" alt="profile Page" src="https://github.com/user-attachments/assets/131c9164-e9d6-4c08-8fe9-b79498954a0c">
 
 Team Leave Summary
