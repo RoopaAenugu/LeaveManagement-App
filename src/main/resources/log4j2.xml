@@ -1,0 +1,32 @@
+<Configuration status="debug">
+
+    <!-- Define appender -->
+    <Appenders>
+
+        <!-- Console Appender -->
+        <Console name="Console">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <!-- File Appender -->
+        <RollingFile name="File" fileName="C:/Users/roopaa_700059/IdeaProjects/Employee_WEBAPP/app.log"
+                     filePattern="C:/Users/roopaa_700059/IdeaProjects/Employee_WEBAPP/app.%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>
+            <SizeBasedTriggeringPolicy size="1MB"/>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <!-- Define loggers -->
+    <Loggers>
+        <!-- what to log -->
+        <!-- Root logger -->
+        <Root level="debug">
+            <!-- Reference the Console and File appends -->
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+
+    </Loggers>
+</Configuration>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"/>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+            crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/5f59ca6ad3.js" crossorigin="anonymous"></script>
+    <style>
+        body{
+        background-color:rgb(90, 90, 90)
+        }
+        .container {
+            margin-top: 50px;
+            max-width: 500px;
+
+        }
+
+        .heading {
+            font-size: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-register {
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            width: 100%;
+        }
+
+        .btn-secondary {
+            width: 100%;
+        }
+
+        .loginForm {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            margin: 0 auto;
+        }
+
+        .input-group-text {
+            background-color: #ffffff;
+            border-left:0;
+        }
+
+        .form-control {
+            border-right: 0;
+        }
+
+        .input-group .form-control:focus {
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="loginForm">
+        <h1 class="heading">Login Form</h1>
+        <form action="login" method="post">
+            <div class="form-group">
+                <div class="input-group">
+
+                    <input type="text" class="form-control" id="emailId" placeholder="Enter Employee Email"
+                           name="emailId" required>
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" placeholder="Enter Password"
+                           name="password" required>
+
+
+                    <div class="input-group-prepend ">
+                        <span class="input-group-text"> <i class="fas fa-lock"></i></i></span>
+                    </div>
+                </div>
+
+            </div>
+            <div id="error-message" class="alert alert-danger d-none" role="alert"></div>
+            <button type="submit" class="btn btn-primary">Login</button>
+
+            <div class="text-center btn-register">
+                <a href="register.html" class="btn btn-secondary">New? Register Here</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Check if there is an error message in the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error) {
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = decodeURIComponent(error);
+            errorMessage.classList.remove('d-none');
+        }
+    });
+</script>
+
+</body>
+</html>
