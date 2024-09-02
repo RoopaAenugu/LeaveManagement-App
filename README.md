@@ -11,13 +11,13 @@ Employee ApplyLeave Page:
 <img width="914" alt="applyLeave" src="https://github.com/user-attachments/assets/63a119fd-9c6a-4dbb-9653-86eea0fb08a4">
 
 Employee Profile Page :
-<img width="440" alt="profile" src="https://github.com/user-attachments/assets/fd9404e4-557a-441a-ba44-d33a90422d4f">
+<img width="320" alt="profile Page" src="https://github.com/user-attachments/assets/131c9164-e9d6-4c08-8fe9-b79498954a0c">
 
 Team Leave Summary
-![TeamLeaveSummary](https://github.com/user-attachments/assets/3ce0e70f-3aa8-4cbd-8849-6ca235466a49)
+<img width="940" alt="TeamLeaveSummary" src="https://github.com/user-attachments/assets/2db39a98-433e-4412-abba-c59fd2f95b5c">
 
 Team Leave Requests
-![TeamLeaveRequest](https://github.com/user-attachments/assets/9659bcd3-4faf-44bc-ac0c-0c889537c659)
+<img width="941" alt="TeamLeaveRequest" src="https://github.com/user-attachments/assets/40452d64-a616-44f9-b89f-31e3aa52822b">
 
 Validations :
 1. Validation For PreDate:
