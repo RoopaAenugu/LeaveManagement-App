@@ -6,45 +6,42 @@ The Leave Management App is designed to streamline the process of managing emplo
 
 Features
 1. Leave Summary Cards
-   
-Description: Displays a summary of leave balances for different leave types (e.g., Sick Leave, Casual Leave, Paternity Leave, Maternity Leave).
-Functionality: Dynamically updates based on the employee's leave data fetched from the server.
+      Description: Displays a summary of leave balances for different leave types (e.g., Sick Leave, Casual Leave, Paternity 
+      Leave, Maternity Leave).
+      Functionality: Dynamically updates based on the employee's leave data fetched from the server.
 
 2. Apply Leave
-   
-Description: Allows employees to submit leave requests.
-Functionality: Users can specify leave type, dates, and reasons. The system checks leave limits and validity before submission.
+      Description: Allows employees to submit leave requests.
+      Functionality: Users can specify leave type, dates, and reasons. The system checks leave limits and validity before 
+      submission.
 
 3. View Applied Leaves
-   
-Description: Shows a list of leave requests submitted by the employee.
-Functionality: Provides a table view with details such as leave type, dates, reason, and status.
+      Description: Shows a list of leave requests submitted by the employee.
+      Functionality: Provides a table view with details such as leave type, dates, reason, and status.
 
 4. Team Leave Summary
- 
-Description: Displays a summary of leave requests for the employee's team.
-Functionality: Managers can see leave details for all team members, categorized by leave type.
+      Description: Displays a summary of leave requests for the employee's team.
+      Functionality: Managers can see leave details for all team members, categorized by leave type.
 
 5. Approve/Reject Leave Requests
-
-Description: Allows managers to review and take action on leave requests.
-Functionality: Provides buttons to accept or reject leave requests. The status is updated accordingly, and the table view is refreshed.
+      Description: Allows managers to review and take action on leave requests.
+      Functionality: Provides buttons to accept or reject leave requests. The status is updated accordingly, and the table 
+      view is refreshed.
 
 6. Employee Profile Details
- 
-Description: Displays detailed information about the logged-in employee and their manager.
-Functionality: Shows personal details, manager information, and adjusts leave options based on the employee's gender.
+      Description: Displays detailed information about the logged-in employee and their manager.
+      Functionality: Shows personal details, manager information, and adjusts leave options based on the employee's gender.
 
 7. Date Validation and Calculations
-
-Description: Ensures leave requests are valid based on the current date and calculates the number of weekdays between leave dates.
-Functionality: Validates leave dates to prevent applications on weekends or past dates, and calculates the duration of leave.
+      Description: Ensures leave requests are valid based on the current date and calculates the number of weekdays between 
+      leave dates.
+      Functionality: Validates leave dates to prevent applications on weekends or past dates, and calculates the duration of 
+      leave.
 
 8. Modal Notifications
-
-Description: Provides feedback to users about the success or failure of their actions.
-Functionality: Shows modals with appropriate messages based on user actions or errors.
-
+      Description: Provides feedback to users about the success or failure of their actions.
+      Functionality: Shows modals with appropriate messages based on user actions or errors.
+      
 
 Login Page:
 ![LoginPage](https://github.com/user-attachments/assets/7a2c4173-90ea-4d16-afb1-be4d2ffd4e1d)
