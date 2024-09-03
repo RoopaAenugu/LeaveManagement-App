@@ -24,11 +24,12 @@ public class EmployeeLeaveServiceImpl implements EmployeeLeaveService {
 
     @Override
     public LeaveRequest applyLeave(LeaveRequest leaveRequest) throws ServerUnavailableException {
-      return  employeeLeaveRepository.applyLeave(leaveRequest);
+        return employeeLeaveRepository.applyLeave(leaveRequest);
     }
+
     @Override
     public List<EmployeeLeave> getAppliedLeaves(int empId, LeaveRequestStatus status) throws ServerUnavailableException {
-        return employeeLeaveRepository.getAppliedLeaves(empId,status);
+        return employeeLeaveRepository.getAppliedLeaves(empId, status);
     }
 
     @Override
@@ -42,10 +43,9 @@ public class EmployeeLeaveServiceImpl implements EmployeeLeaveService {
     }
 
 
-
     @Override
-    public List<EmployeeLeave> getLeavesOfEmployees(List<Integer> employeeIds,LeaveRequestStatus status) throws ServerUnavailableException {
-        return employeeLeaveRepository.getLeavesOfEmployees(employeeIds,status);
+    public List<EmployeeLeave> getLeavesOfEmployees(List<Integer> employeeIds, LeaveRequestStatus status) throws ServerUnavailableException {
+        return employeeLeaveRepository.getLeavesOfEmployees(employeeIds, status);
     }
 
     @Override
@@ -54,8 +54,8 @@ public class EmployeeLeaveServiceImpl implements EmployeeLeaveService {
     }
 
     @Override
-    public int getTotalNumberOfLeavesTaken(int empId,int leaveTypeId) throws SQLException {
-        return  employeeLeaveRepository.getTotalNumberOfLeavesTaken(empId,leaveTypeId);
+    public int getTotalNumberOfLeavesTaken(int empId, int leaveTypeId) throws SQLException {
+        return employeeLeaveRepository.getTotalNumberOfLeavesTaken(empId, leaveTypeId);
     }
 
     @Override
@@ -67,5 +67,4 @@ public class EmployeeLeaveServiceImpl implements EmployeeLeaveService {
     public String getLeaveType(int leaveTypeId) throws ServerUnavailableException {
         return employeeLeaveRepository.getLeaveType(leaveTypeId);
     }
-
 }

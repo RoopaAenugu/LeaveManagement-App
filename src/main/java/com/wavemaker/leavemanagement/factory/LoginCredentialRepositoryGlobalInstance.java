@@ -9,7 +9,9 @@ public class LoginCredentialRepositoryGlobalInstance {
     public static LoginCredentialRepository getLoginCredentialRepositoryInstance() {
         if (loginCredentialRepository == null) {
             synchronized (LoginCredentialRepositoryGlobalInstance.class) {
-                loginCredentialRepository = new LoginCredentialRepositoryImpl();
+                if (loginCredentialRepository == null) {
+                    loginCredentialRepository = new LoginCredentialRepositoryImpl();
+                }
 
             }
 

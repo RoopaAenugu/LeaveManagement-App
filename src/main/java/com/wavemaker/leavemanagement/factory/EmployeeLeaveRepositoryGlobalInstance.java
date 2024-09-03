@@ -9,7 +9,9 @@ public class EmployeeLeaveRepositoryGlobalInstance {
     public static EmployeeLeaveRepository getEmployeeLeaveRepositoryInstance() {
         if (employeeLeaveRepository == null) {
             synchronized (EmployeeLeaveRepositoryGlobalInstance.class) {
-                employeeLeaveRepository = new EmployeeLeaveRepositoryImpl();
+                if (employeeLeaveRepository == null) {
+                    employeeLeaveRepository = new EmployeeLeaveRepositoryImpl();
+                }
             }
         }
         return employeeLeaveRepository;

@@ -9,7 +9,11 @@ public class EmployeeCookieRepositoryGlobalInstance {
     public static EmployeeCookieRepository getEmployeeCookieRepositoryInstance() {
         if (employeeCookieRepository == null) {
             synchronized (EmployeeCookieRepositoryGlobalInstance.class) {
-                employeeCookieRepository = new EmployeeCookieRepositoryImpl();
+                if (employeeCookieRepository == null) {
+                    employeeCookieRepository = new EmployeeCookieRepositoryImpl();
+
+                }
+
 
             }
 

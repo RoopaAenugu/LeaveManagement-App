@@ -62,6 +62,7 @@ async function fetchLeaveSummary() {
     } catch (error) {
         console.error('Error fetching leave summary:', error);
     }
+
 }
 function updateTeamLeaveCard(leave, containerId) {
     let cardId;
@@ -81,10 +82,8 @@ function updateTeamLeaveCard(leave, containerId) {
     }
 
     const container = document.getElementById(containerId);
-
         // Create a card element for each employee if it doesn't already exist
         let employeeCard = document.getElementById(`employee-${leave.employeeId}`);
-
         if (!employeeCard) {
             // Create a new card for the employee
             employeeCard = document.createElement('div');
@@ -104,7 +103,6 @@ function updateTeamLeaveCard(leave, containerId) {
             // Append the new employee card to the container
             container.appendChild(employeeCard);
         }
-
         // Add leave type details to the existing employee card
         const cardBody = employeeCard.querySelector('.card-body');
 
@@ -171,15 +169,13 @@ function populateEmployeeDetails(employeeManager) {
                     document.getElementById("managerName").innerText = employeeManager.managerName;
                     document.getElementById("managerEmail").innerText = employeeManager.managerEmail;
                     document.getElementById("managerPhone").innerText = employeeManager.managerPhoneNumber;
-                    document.getElementById("managerGender").innerText = employeeManager.managerGender;
-                    document.getElementById("managerDob").innerText = employeeManager.managerDateOfBirth;
+
                     document.getElementById("managerDetails").style.display = 'block'; // Show manager details section
                 }
             document.getElementById("managerName").innerText = employeeManager.managerName;
             document.getElementById("managerEmail").innerText = employeeManager.managerEmail;
             document.getElementById("managerPhone").innerText = employeeManager.managerPhoneNumber;
-            document.getElementById("managerGender").innerText = employeeManager.managerGender;
-            document.getElementById("managerDob").innerText = employeeManager.managerDateOfBirth;
+
         }
 document.getElementById("profileDetails").addEventListener("click", async function () {
     try {
@@ -262,13 +258,7 @@ console.log(leave.status);
             <button id="accept-btn-${leave.leaveId}" onclick="approveLeave(${leave.leaveId})" class="btn btn-success">Accept</button>
             <button id="reject-btn-${leave.leaveId}" onclick="rejectLeave(${leave.leaveId})" class="btn btn-danger">Reject</button>
         `;
-    } else if(leave.totalEmployeeLeaves>leave.typeLimit){
-                    managerCheckToApproveOrReject=1;//total taken leaves greater than allocated limit leaves then manager will reject it
-                    openModal("Leave Limit Exceeded", "You have already exceeded your leave limit for this type.");
-                    return `<span class="text-danger">&#10008;</span>`;
-
-                  }
-    else if (leave.status === 'APPROVED') {
+    } else if (leave.status === 'APPROVED') {
         return `<span class="text-success">&#10004;</span>`; // ✔ icon
     } else if (leave.status === 'REJECTED') {
         return `<span class="text-danger">&#10008;</span>`; // ✖ icon
@@ -278,22 +268,23 @@ console.log(leave.status);
 }
 // Approve Leave
 async function approveLeave(leaveId) {
-if(managerCheckToApproveOrReject==1){//if managerCheckToApproveOrReject is 1 then manager will reject the leave request
-rejectLeave(leaveId);
-}
-else{
-    try {
+console.log("leaveId",leaveId);
+        try{
         const response = await fetch(`${apiUrl}/acceptLeaveRequest?leaveId=${leaveId}`, {
             method: 'PUT'
         });
         if (!response.ok) throw new Error('Network response was not ok');
         await response.json(); // Await the completion of the response
-        fetchMyTeamLeaves("ALL"); // Refresh the team leaves section
+
+        // Refresh the team leaves section
+        fetchMyTeamLeaves("ALL");
+        openModal("Success", "Leave approved successfully!");
     } catch (error) {
         console.error('Error approving leave:', error);
+        openModal("Error", "Failed to approve leave. Please try again later.");
     }
 }
-}
+
 // Reject Leave
 async function rejectLeave(leaveId) {
     try {
@@ -409,6 +400,24 @@ function openModal(title, message) {
             modal.style.display = 'none';
         }
     };
+function countWeekdays(startDate, endDate) {
+    let count = 0;
+    let currentDate = new Date(startDate);
+
+    // Iterate through each day from startDate to endDate
+    while (currentDate <= endDate) {
+        // Check if the current day is a weekday (Monday to Friday)
+        const dayOfWeek = currentDate.getDay();
+        if (dayOfWeek !== 6 && dayOfWeek !== 0) { // 6 = Saturday, 0 = Sunday
+            count++;
+        }
+        // Move to the next day
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return count;
+}
+
 function isWeekend(date) {
     const dayOfWeek = date.getDay();
     return dayOfWeek === 6 || dayOfWeek === 0; // 6 = Saturday, 0 = Sunday
@@ -457,14 +466,13 @@ applyLeaveForm.addEventListener('submit', async (event) => {
                      return;
                  }
                  // Calculate leave duration
-                 const leaveDuration = calculateDateDifference(fromDate, toDate);
-                 console.log("Leave Duration (days):", leaveDuration);
-                 // Check if the leave duration exceeds the available leave
-                 const pendingLeaves =leaveLimits.typeLimit - leaveLimits.totalEmployeeLeaves;
-                 if (leaveDuration > pendingLeaves) {
-                     openModal("Exceeding Leave Limit", `You are exceeding your leave limit. You only have ${pendingLeaves} pending leave days left.`);
-                     return;
-                 }
+                 const leaveDuration = countWeekdays(fromDate, toDate);
+                 const pendingLeaves = leaveLimits.typeLimit - leaveLimits.totalEmployeeLeaves;
+
+                    if (leaveDuration > pendingLeaves) {
+                        openModal("Exceeding Leave Limit", `You are exceeding your leave limit. You only have ${pendingLeaves} pending leave days left.`);
+                        return;
+                    }
                  // Check if the total leaves exceed the limit
                  if (leaveLimits.totalEmployeeLeaves >= leaveLimits.typeLimit) {
                      openModal("Leave Limit Exceeded", "You have already exceeded your leave limit for this type.");

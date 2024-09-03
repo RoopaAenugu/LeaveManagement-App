@@ -63,12 +63,13 @@ public class EmployeeLeaveSummaryServlet extends HttpServlet {
     }
 
     private void getEmployeeLeaveSummary(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Employee employee = null;
         try {
             HttpSession session = request.getSession(false);
             if (session != null) {
                 Integer loginId = (Integer) session.getAttribute("loginId");
                 if (loginId != null) {
-                    Employee employee = employeeService.getEmployeeByLoginId(loginId);
+                    employee = employeeService.getEmployeeByLoginId(loginId);
                     if (employee != null) {
                         int employeeId = employee.getEmployeeId();
                         List<EmployeeLeaveSummary> employeeLeaveSummary = employeeLeaveSummaryService.getEmployeeLeaveSummaryByEmpId(employeeId);
@@ -90,12 +91,13 @@ public class EmployeeLeaveSummaryServlet extends HttpServlet {
     }
 
     private void getTeamLeaveSummary(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Employee manager = null;
         try {
             HttpSession session = request.getSession(false);
             if (session != null) {
                 Integer loginId = (Integer) session.getAttribute("loginId");
                 if (loginId != null) {
-                    Employee manager = employeeService.getEmployeeByLoginId(loginId);
+                    manager = employeeService.getEmployeeByLoginId(loginId);
                     if (manager != null) {
                         int managerId = manager.getEmployeeId();
                         List<Integer> employeeIds = employeeService.getEmpIdUnderManager(managerId);
@@ -122,6 +124,7 @@ public class EmployeeLeaveSummaryServlet extends HttpServlet {
     }
 
     private void getLeaveLimitsForLeaveType(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Employee employee = null;
         try {
             String leaveType = request.getParameter("leaveType");
             if (leaveType != null && !leaveType.trim().isEmpty()) {
@@ -129,14 +132,12 @@ public class EmployeeLeaveSummaryServlet extends HttpServlet {
                 if (session != null) {
                     Integer loginId = (Integer) session.getAttribute("loginId");
                     if (loginId != null) {
-                        Employee employee = employeeService.getEmployeeByLoginId(loginId);
+                        employee = employeeService.getEmployeeByLoginId(loginId);
                         if (employee != null) {
                             int employeeId = employee.getEmployeeId();
                             int leaveLimit = employeeLeaveService.getNumberOfLeavesAllocated(leaveType);
                             int leaveTypeId = employeeLeaveService.getLeaveTypeId(leaveType);
-                            int leavesTaken = employeeLeaveService.getTotalNumberOfLeavesTaken( employeeId,leaveTypeId);
-
-                            // Creating the response object
+                            int leavesTaken = employeeLeaveService.getTotalNumberOfLeavesTaken(employeeId, leaveTypeId);
                             EmployeeLeave leaveDetails = new EmployeeLeave();
                             leaveDetails.setEmployeeId(employeeId);
                             leaveDetails.setTypeLimit(leaveLimit);

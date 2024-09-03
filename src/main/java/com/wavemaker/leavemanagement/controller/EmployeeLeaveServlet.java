@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -42,7 +43,7 @@ public class EmployeeLeaveServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         String pathInfo = request.getPathInfo();
         if (pathInfo != null && pathInfo.equals("/getAppliedLeaves")) {
             getAppliedLeaves(request, response);
@@ -59,7 +60,7 @@ public class EmployeeLeaveServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         String pathInfo = request.getPathInfo();
         if (pathInfo != null && pathInfo.equals("/applyEmployeeLeave")) {
             applyEmployeeLeave(request, response);
@@ -76,8 +77,10 @@ public class EmployeeLeaveServlet extends HttpServlet {
         }
     }
 
-    private void applyEmployeeLeave(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void applyEmployeeLeave(HttpServletRequest request, HttpServletResponse response) {
         String leaveType = request.getParameter("leaveType");
+        String jsonResponse = "";
+        Employee employee = null;
         if (leaveType == null || leaveType.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             writeResponse(response, "Leave type is required.");
@@ -101,7 +104,7 @@ public class EmployeeLeaveServlet extends HttpServlet {
                     // Parse the request body to EmployeeLeave and LeaveRequest
                     EmployeeLeave employeeLeave = gson.fromJson(requestBody, EmployeeLeave.class);
                     LeaveRequest leaveRequest = gson.fromJson(requestBody, LeaveRequest.class);
-                    Employee employee = employeeService.getEmployeeByLoginId(loginId);
+                    employee = employeeService.getEmployeeByLoginId(loginId);
                     if (employee != null) {
                         int leaveTypeId = employeeLeaveService.getLeaveTypeId(leaveType);
                         leaveRequest.setLeaveTypeId(leaveTypeId);
@@ -128,7 +131,7 @@ public class EmployeeLeaveServlet extends HttpServlet {
                             employeeSummary.setLeaveTypeId(addLeaveRequest.getLeaveTypeId());
                             employeeSummary.setTotalAllocatedLeaves(numberOfLeavesAllocated);
                             EmployeeLeaveSummary addEmployeeLeaveSummary = employeeLeaveSummaryService.addEmployeeLeaveSummary(employeeSummary);
-                            String jsonResponse = gson.toJson(employeeLeave);
+                            jsonResponse = gson.toJson(employeeLeave);
                             writeResponse(response, jsonResponse);
                         } else {
                             writeResponse(response, "Failed to apply leave request.");
@@ -143,14 +146,20 @@ public class EmployeeLeaveServlet extends HttpServlet {
                 writeResponse(response, "Session is not valid.");
             }
         } catch (ServerUnavailableException e) {
-            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Service temporarily unavailable. Please try again later.");
+            jsonResponse = "Service temporarily unavailable. Please try again later.";
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            writeResponse(response, jsonResponse);
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while inserting the leave request: " + e.getMessage());
+            jsonResponse = "An error occurred while inserting the leave request: \" + e.getMessage()";
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            writeResponse(response, jsonResponse);
+
         }
     }
 
-    private void getAppliedLeaves(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void getAppliedLeaves(HttpServletRequest request, HttpServletResponse response) {
         String status = request.getParameter("status");
+        String jsonResponse = "";
         if (status == null || status.isEmpty()) {
             writeResponse(response, "Status is empty");
             return;
@@ -164,7 +173,7 @@ public class EmployeeLeaveServlet extends HttpServlet {
                     if (employee != null) {
                         int employeeId = employee.getEmployeeId();
                         List<EmployeeLeave> leaveRequests = employeeLeaveService.getAppliedLeaves(employeeId, LeaveRequestStatus.valueOf(status));
-                        String jsonResponse = gson.toJson(leaveRequests);
+                        jsonResponse = gson.toJson(leaveRequests);
                         writeResponse(response, jsonResponse);
                     } else {
                         writeResponse(response, "Employee not found.");
@@ -176,15 +185,21 @@ public class EmployeeLeaveServlet extends HttpServlet {
                 writeResponse(response, "Session is not valid.");
             }
         } catch (ServerUnavailableException e) {
-            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Service temporarily unavailable. Please try again later.");
+            jsonResponse = "Service temporarily unavailable. Please try again later.";
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            writeResponse(response, jsonResponse);
         } catch (Exception e) {
+            jsonResponse = "An error occurred while fetching leaves for the logged-in employee: " + e.getMessage();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            writeResponse(response, jsonResponse);
 
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while fetching leaves for the logged-in employee: " + e.getMessage());
         }
     }
 
-    private void getMyTeamRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void getMyTeamRequests(HttpServletRequest request, HttpServletResponse response) {
         String status = request.getParameter("status");
+        Employee employee = null;
+        String jsonResponse = "";
         if (status == null || status.isEmpty()) {
             writeResponse(response, "status is empty");
             return;
@@ -194,11 +209,11 @@ public class EmployeeLeaveServlet extends HttpServlet {
             if (session != null) {
                 Integer loginId = (Integer) session.getAttribute("loginId");
                 if (loginId != null) {
-                    Employee employee = employeeService.getEmployeeByLoginId(loginId);
+                    employee = employeeService.getEmployeeByLoginId(loginId);
                     int managerId = employee.getEmployeeId();
                     List<Integer> employeeIds = employeeService.getEmpIdUnderManager(managerId);
                     List<EmployeeLeave> employeeLeaves = employeeLeaveService.getLeavesOfEmployees(employeeIds, LeaveRequestStatus.valueOf(status));
-                    String jsonResponse = gson.toJson(employeeLeaves);
+                    jsonResponse = gson.toJson(employeeLeaves);
                     writeResponse(response, jsonResponse);
                 } else {
                     writeResponse(response, "Manager ID is missing.");
@@ -206,14 +221,19 @@ public class EmployeeLeaveServlet extends HttpServlet {
             }
 
         } catch (ServerUnavailableException e) {
-            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Service temporarily unavailable. Please try again later.");
+            jsonResponse = "Service temporarily unavailable. Please try again later.";
+            writeResponse(response, jsonResponse);
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while retrieving team leave requests: " + e.getMessage());
+            jsonResponse = "An error occurred while retrieving team leave requests: " + e.getMessage();
+            writeResponse(response, jsonResponse);
+
         }
 
     }
 
-    private void acceptLeaveRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void acceptLeaveRequest(HttpServletRequest request, HttpServletResponse response) {
+        EmployeeLeave employeeLeave = null;
+        String jsonResponse;
         try {
             HttpSession session = request.getSession(false);
             if (session != null) {
@@ -223,7 +243,7 @@ public class EmployeeLeaveServlet extends HttpServlet {
                     if (leaveIdStr != null) {
                         leaveIdStr = leaveIdStr.trim();
                         int leaveId = Integer.parseInt(leaveIdStr);
-                        EmployeeLeave employeeLeave = employeeLeaveService.acceptLeaveRequest(leaveId);
+                        employeeLeave = employeeLeaveService.acceptLeaveRequest(leaveId);
                         if (employeeLeave != null) {
                             EmployeeLeaveSummary employeeLeaveSummary = new EmployeeLeaveSummary();
                             String leaveType = employeeLeaveService.getLeaveType(employeeLeave.getLeaveTypeId());
@@ -233,9 +253,7 @@ public class EmployeeLeaveServlet extends HttpServlet {
                             int numberOfLeavesAllocated = employeeLeaveService.getNumberOfLeavesAllocated(leaveType);
                             employeeLeaveSummary.setTotalAllocatedLeaves(numberOfLeavesAllocated);
                             boolean updatedEmployeeLeaveSummary = employeeLeaveSummaryService.updateEmployeeLeaveSummary(employeeLeaveSummary);
-
-
-                            String jsonResponse = gson.toJson(employeeLeave);
+                            jsonResponse = gson.toJson(employeeLeave);
                             writeResponse(response, jsonResponse);
                         } else {
                             writeResponse(response, "Leave request not found or already accepted.");
@@ -250,13 +268,18 @@ public class EmployeeLeaveServlet extends HttpServlet {
                 writeResponse(response, "Session is not valid.");
             }
         } catch (ServerUnavailableException e) {
-            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Service temporarily unavailable. Please try again later.");
+            jsonResponse = "Service temporarily unavailable. Please try again later.";
+            writeResponse(response, jsonResponse);
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while accepting the leave request: " + e.getMessage());
+            jsonResponse = "An error occurred while accepting the leave request: " + e.getMessage();
+            writeResponse(response, jsonResponse);
+
         }
     }
 
-    private void rejectLeaveRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void rejectLeaveRequest(HttpServletRequest request, HttpServletResponse response) {
+        LeaveRequest leaveRequest = null;
+        String jsonResponse;
         try {
             HttpSession session = request.getSession(false);
             if (session != null) {
@@ -266,9 +289,9 @@ public class EmployeeLeaveServlet extends HttpServlet {
                     if (leaveIdStr != null) {
                         leaveIdStr = leaveIdStr.trim();
                         int leaveId = Integer.parseInt(leaveIdStr);
-                        LeaveRequest leaveRequest = employeeLeaveService.rejectLeaveRequest(leaveId);
+                        leaveRequest = employeeLeaveService.rejectLeaveRequest(leaveId);
                         if (leaveRequest != null) {
-                            String jsonResponse = gson.toJson(leaveRequest);
+                            jsonResponse = gson.toJson(leaveRequest);
                             writeResponse(response, jsonResponse);
                         } else {
                             writeResponse(response, "Leave request not found.");
@@ -283,21 +306,26 @@ public class EmployeeLeaveServlet extends HttpServlet {
                 writeResponse(response, "Session is not valid.");
             }
         } catch (ServerUnavailableException e) {
-            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Service temporarily unavailable. Please try again later.");
+            jsonResponse = "Service temporarily unavailable. Please try again later.";
+            writeResponse(response, jsonResponse);
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while rejecting the leave request: " + e.getMessage());
+            jsonResponse = "An error occurred while rejecting the leave request: " + e.getMessage();
+            writeResponse(response, jsonResponse);
+
         }
     }
 
-    private void getEmployeeName(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void getEmployeeName(HttpServletRequest request, HttpServletResponse response) {
+        Employee employee = null;
+        String jsonResponse = "";
         try {
             HttpSession session = request.getSession(false);
             if (session != null) {
                 Integer loginId = (Integer) session.getAttribute("loginId");
                 if (loginId != null) {
-                    Employee employee = employeeService.getEmployeeByLoginId(loginId);
+                    employee = employeeService.getEmployeeByLoginId(loginId);
                     if (employee != null) {
-                        String jsonResponse = gson.toJson(employee);
+                        jsonResponse = gson.toJson(employee);
                         writeResponse(response, jsonResponse);
                     } else {
                         writeResponse(response, "Employee not found.");
@@ -309,30 +337,35 @@ public class EmployeeLeaveServlet extends HttpServlet {
                 writeResponse(response, "Session is not valid.");
             }
         } catch (Exception e) {
+           jsonResponse =  "An error occurred while fetching leaves for the logged-in employee: " + e.getMessage();
+           writeResponse(response,jsonResponse);
 
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while fetching leaves for the logged-in employee: " + e.getMessage());
         }
 
     }
-    private void getEmployeeAndManagerDetails(HttpServletRequest request, HttpServletResponse response) throws
-            IOException {
+
+    private void getEmployeeAndManagerDetails(HttpServletRequest request, HttpServletResponse response)
+    {
+        EmployeeManager employeeManager = null;
+        Employee employee = null;
+        String jsonResponse ="";
         try {
             HttpSession session = request.getSession(false);
             if (session != null) {
                 Integer loginId = (Integer) session.getAttribute("loginId");
                 if (loginId != null) {
-                    Employee employee = employeeService.getEmployeeByLoginId(loginId);
+                    employee = employeeService.getEmployeeByLoginId(loginId);
                     if (employee != null) {
                         int employeeId = employee.getEmployeeId();
                         int managerId = employee.getManagerId();
                         if (managerId != 0) {
-                            EmployeeManager employeeManager = employeeService.getEmployeeManagerDetails(employeeId);
-                            String jsonResponse = gson.toJson(employeeManager);
+                            employeeManager = employeeService.getEmployeeManagerDetails(employeeId);
+                            jsonResponse = gson.toJson(employeeManager);
                             writeResponse(response, jsonResponse);
                         } else {
                             employee = employeeService.getEmployeeByLoginId(loginId);
                             if (employee != null) {
-                                String jsonResponse = gson.toJson(employee);
+                                jsonResponse = gson.toJson(employee);
                                 writeResponse(response, jsonResponse);
                             } else {
                                 writeResponse(response, "Employee not found.");
@@ -347,15 +380,26 @@ public class EmployeeLeaveServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
-
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while fetching leaves for the logged-in employee: " + e.getMessage());
+            jsonResponse = "\"An error occurred while fetching leaves for the logged-in employee: \" + e.getMessage()";
+            writeResponse(response, jsonResponse);
         }
 
     }
 
-    private void writeResponse(HttpServletResponse response, String jsonResponse) throws IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(jsonResponse);
+    private void writeResponse(HttpServletResponse response, String jsonResponse) {
+        PrintWriter printWriter = null;
+        try {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            printWriter = response.getWriter();
+            printWriter.print(jsonResponse);
+            printWriter.flush();
+        } catch (IOException e) {
+            jsonResponse = "server Unavailable";
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            printWriter.print(jsonResponse);
+            printWriter.flush();
+
+        }
     }
 }

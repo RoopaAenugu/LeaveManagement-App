@@ -5,15 +5,13 @@ import com.wavemaker.leavemanagement.exception.ServerUnavailableException;
 import com.wavemaker.leavemanagement.model.EmployeeLeave;
 import com.wavemaker.leavemanagement.model.LeaveRequest;
 import com.wavemaker.leavemanagement.repository.EmployeeLeaveRepository;
+import com.wavemaker.leavemanagement.util.DateUtil;
 import com.wavemaker.leavemanagement.util.DbConnection;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +45,7 @@ public class EmployeeLeaveRepositoryImpl implements EmployeeLeaveRepository {
                     "FROM LEAVE_TYPES " +
                     "WHERE TYPE_NAME = ?";
     private static final String COUNT_APPROVED_LEAVES_BY_TYPE_QUERY =
-            "SELECT SUM(DATEDIFF(TO_DATE, FROM_DATE) + 1) AS total_leaves " +
+            "SELECT FROM_DATE, TO_DATE " +
                     "FROM LEAVE_REQUEST " +
                     "WHERE EMPLOYEE_ID = ? " +
                     "AND STATUS = 'APPROVED' " +
@@ -58,6 +56,8 @@ public class EmployeeLeaveRepositoryImpl implements EmployeeLeaveRepository {
             "SELECT LEAVE_TYPE_ID FROM LEAVE_TYPES WHERE TYPE_NAME = ?";
     private static final String SELECT_LEAVE_TYPE_QUERY =
             "SELECT TYPE_NAME FROM LEAVE_TYPES WHERE LEAVE_TYPE_ID  = ?";
+    private static final String  SELECT_LEAVE_TYPE_ID_BY_LEAVEID_QUERY =
+            "SELECT LEAVE_TYPE_ID FROM LEAVE_REQUEST WHERE LEAVE_ID = ?";
 
 
     @Override
@@ -265,116 +265,132 @@ public class EmployeeLeaveRepositoryImpl implements EmployeeLeaveRepository {
     }
 
     @Override
-    public int getTotalNumberOfLeavesTaken(int employeeId,int leaveTypeId) {
+    public int getTotalNumberOfLeavesTaken(int employeeId, int leaveTypeId) {
         int totalLeaves = 0;
 
         try (Connection connection = DbConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(COUNT_APPROVED_LEAVES_BY_TYPE_QUERY)) {
+
             preparedStatement.setInt(1, employeeId);
             preparedStatement.setInt(2, leaveTypeId);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    totalLeaves = resultSet.getInt("total_leaves");
+                while (resultSet.next()) {
+                    Date fromDate = resultSet.getDate("FROM_DATE");
+                    Date toDate = resultSet.getDate("TO_DATE");
+
+                    if (fromDate != null && toDate != null) {
+                        // Calculate the number of leave days excluding weekends
+                        int leaveDays = DateUtil.calculateTotalDaysExcludingWeekends(fromDate, toDate);
+                        totalLeaves += leaveDays;
+                    } else {
+                        // Handle cases where fromDate or toDate might be null
+                        logger.warn("Encountered null date values for employee ID {}", employeeId);
+                    }
                 }
+            } catch (SQLException e) {
+                logger.error("Error while processing result set", e);
             }
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle exceptions (e.g., logging)
+            logger.error("Error while establishing connection or executing query", e);
         }
 
         return totalLeaves;
     }
 
+
+
+@Override
+public int getLeaveTypeId(String leaveType) throws ServerUnavailableException {
+    int leaveTypeId = -1; // Default value if not found
+
+
+    try (Connection connection = DbConnection.getConnection();
+         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LEAVE_TYPE_ID_QUERY)) {
+
+        preparedStatement.setString(1, leaveType);
+
+        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                leaveTypeId = resultSet.getInt("LEAVE_TYPE_ID");
+            }
+        }
+    } catch (SQLException e) {
+        throw new ServerUnavailableException("Unable to retrieve leave type ID", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    return leaveTypeId;
+
+}
+
+@Override
+public String getLeaveType(int leaveTypeId) throws ServerUnavailableException {
+    String leaveType = ""; // Default value if not found
+
+
+    try (Connection connection = DbConnection.getConnection();
+         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LEAVE_TYPE_QUERY)) {
+
+        preparedStatement.setInt(1, leaveTypeId);
+
+        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                leaveType = resultSet.getString("TYPE_NAME");
+            }
+        }
+    } catch (SQLException e) {
+        throw new ServerUnavailableException("Unable to retrieve leave type ID", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    return leaveType;
+
+}
+
+
     @Override
-    public int getLeaveTypeId(String leaveType) throws ServerUnavailableException {
-        int leaveTypeId = -1; // Default value if not found
+public LeaveRequest rejectLeaveRequest(int leaveId) throws ServerUnavailableException {
 
-
-        try (Connection connection = DbConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LEAVE_TYPE_ID_QUERY)) {
-
-            preparedStatement.setString(1, leaveType);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+    try (Connection connection = DbConnection.getConnection();
+         PreparedStatement updateStatement = connection.prepareStatement(UPDATE_LEAVE_STATUS_TO_REJECTED_QUERY);
+         PreparedStatement selectStatement = connection.prepareStatement(GET_LEAVE_REQUEST_QUERY)) {
+        // Update the leave request status
+        updateStatement.setInt(1, leaveId);
+        int rowsAffected = updateStatement.executeUpdate();
+        // Check if the update was successful
+        if (rowsAffected > 0) {
+            // Retrieve the updated leave request
+            selectStatement.setInt(1, leaveId);
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    leaveTypeId = resultSet.getInt("LEAVE_TYPE_ID");
+                    return mapResultSetToLeaveRequest(resultSet);
                 }
             }
-        } catch (SQLException e) {
-            throw new ServerUnavailableException("Unable to retrieve leave type ID", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
-        return leaveTypeId;
-
+    } catch (SQLException e) {
+        throw new ServerUnavailableException("server is Unavailable to reject leave request", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        // Handle SQL exceptions (e.g., logging)
     }
 
-    @Override
-    public String getLeaveType(int leaveTypeId) throws ServerUnavailableException {
-        String leaveType=""; // Default value if not found
+    return null;
 
+}
 
-        try (Connection connection = DbConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LEAVE_TYPE_QUERY)) {
+private EmployeeLeave mapResultSetToLeaveRequest(ResultSet resultSet) throws SQLException {
+    EmployeeLeave employeeLeave = new EmployeeLeave();
+    employeeLeave.setLeaveId(resultSet.getInt("LEAVE_ID"));
+    employeeLeave.setEmployeeId(resultSet.getInt("EMPLOYEE_ID"));
+    employeeLeave.setLeaveTypeId(resultSet.getInt("LEAVE_TYPE_ID"));
+    employeeLeave.setFromDate(resultSet.getDate("FROM_DATE").toLocalDate());
+    employeeLeave.setToDate(resultSet.getDate("TO_DATE").toLocalDate());
+    employeeLeave.setReason(resultSet.getString("REASON"));
+    employeeLeave.setStatus(resultSet.getString("STATUS"));
+    employeeLeave.setManagerId(resultSet.getInt("MANAGER_ID"));
+    employeeLeave.setComments(resultSet.getString("COMMENTS"));
+    employeeLeave.setCurrentDate(resultSet.getDate("DATE_OF_APPLICATION").toLocalDate());
+    return employeeLeave;
 
-            preparedStatement.setInt(1, leaveTypeId);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    leaveType = resultSet.getString("TYPE_NAME");
-                }
-            }
-        } catch (SQLException e) {
-            throw new ServerUnavailableException("Unable to retrieve leave type ID", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-
-        return leaveType;
-
-    }
-
-    @Override
-    public LeaveRequest rejectLeaveRequest(int leaveId) throws ServerUnavailableException {
-
-        try (Connection connection = DbConnection.getConnection();
-             PreparedStatement updateStatement = connection.prepareStatement(UPDATE_LEAVE_STATUS_TO_REJECTED_QUERY);
-             PreparedStatement selectStatement = connection.prepareStatement(GET_LEAVE_REQUEST_QUERY)) {
-            // Update the leave request status
-            updateStatement.setInt(1, leaveId);
-            int rowsAffected = updateStatement.executeUpdate();
-            // Check if the update was successful
-            if (rowsAffected > 0) {
-                // Retrieve the updated leave request
-                selectStatement.setInt(1, leaveId);
-                try (ResultSet resultSet = selectStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        return mapResultSetToLeaveRequest(resultSet);
-                    }
-                }
-            }
-
-        } catch (SQLException e) {
-            throw new ServerUnavailableException("server is Unavailable to reject leave request", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            // Handle SQL exceptions (e.g., logging)
-        }
-
-        return null;
-
-    }
-
-    private EmployeeLeave mapResultSetToLeaveRequest(ResultSet resultSet) throws SQLException {
-        EmployeeLeave employeeLeave = new EmployeeLeave();
-        employeeLeave.setLeaveId(resultSet.getInt("LEAVE_ID"));
-        employeeLeave.setEmployeeId(resultSet.getInt("EMPLOYEE_ID"));
-        employeeLeave.setLeaveTypeId(resultSet.getInt("LEAVE_TYPE_ID"));
-        employeeLeave.setFromDate(resultSet.getDate("FROM_DATE").toLocalDate());
-        employeeLeave.setToDate(resultSet.getDate("TO_DATE").toLocalDate());
-        employeeLeave.setReason(resultSet.getString("REASON"));
-        employeeLeave.setStatus(resultSet.getString("STATUS"));
-        employeeLeave.setManagerId(resultSet.getInt("MANAGER_ID"));
-        employeeLeave.setComments(resultSet.getString("COMMENTS"));
-        employeeLeave.setCurrentDate(resultSet.getDate("DATE_OF_APPLICATION").toLocalDate());
-        return  employeeLeave;
-
-    }
+}
 
 }
