@@ -889,3 +889,14 @@
 0:0:0:0:0:0:0:1 - - [05/Sep/2024:15:59:29 +0530] "GET /LeaveManagementApp/holidays HTTP/1.1" 200 1186
 0:0:0:0:0:0:0:1 - - [05/Sep/2024:16:47:57 +0530] "GET /LeaveManagementApp/employee/leave/summary/getPersonalHolidays HTTP/1.1" 200 652
 0:0:0:0:0:0:0:1 - - [05/Sep/2024:16:48:03 +0530] "GET /LeaveManagementApp/employee/leave/summary/getPersonalHolidays HTTP/1.1" 200 652
+0:0:0:0:0:0:0:1 - - [05/Sep/2024:17:23:46 +0530] "GET /LeaveManagementApp/employee/leave/getMyTeamRequests?status=ALL HTTP/1.1" 200 1523
+0:0:0:0:0:0:0:1 - - [05/Sep/2024:17:23:50 +0530] "POST /LeaveManagementApp/logout HTTP/1.1" 302 -
+0:0:0:0:0:0:0:1 - - [05/Sep/2024:17:23:50 +0530] "GET /LeaveManagementApp/login.html HTTP/1.1" 304 -
+0:0:0:0:0:0:0:1 - - [05/Sep/2024:17:23:57 +0530] "POST /LeaveManagementApp/login HTTP/1.1" 302 -
+0:0:0:0:0:0:0:1 - - [05/Sep/2024:17:23:57 +0530] "GET /LeaveManagementApp/index.html HTTP/1.1" 304 -
+0:0:0:0:0:0:0:1 - - [05/Sep/2024:17:23:57 +0530] "GET /LeaveManagementApp/style/style.css HTTP/1.1" 304 -
+0:0:0:0:0:0:0:1 - - [05/Sep/2024:17:23:57 +0530] "GET /LeaveManagementApp/employeescript.js HTTP/1.1" 200 30726
+0:0:0:0:0:0:0:1 - - [05/Sep/2024:17:23:58 +0530] "GET /LeaveManagementApp/employee/leave/employeeDetails/getEmployeeName HTTP/1.1" 200 154
+0:0:0:0:0:0:0:1 - - [05/Sep/2024:17:23:58 +0530] "GET /LeaveManagementApp/employee/leave/getMyTeamRequests?status=ALL HTTP/1.1" 200 3611
+0:0:0:0:0:0:0:1 - - [05/Sep/2024:17:24:00 +0530] "PUT /LeaveManagementApp/employee/leave/rejectLeaveRequest?leaveId=21 HTTP/1.1" 200 256
+0:0:0:0:0:0:0:1 - - [05/Sep/2024:17:24:01 +0530] "GET /LeaveManagementApp/employee/leave/getMyTeamRequests?status=ALL HTTP/1.1" 200 3612

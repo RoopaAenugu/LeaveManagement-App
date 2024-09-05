@@ -157,68 +157,59 @@ Managers must review the following details before approving or rejecting a leave
 - **Network or Server Issues**: If an error occurs during the approval or rejection process, the manager will receive an error message indicating a failure in processing the request.
    - **Error Message**: `"An error occurred while processing the leave request. Please try again later or contact support."`
 
-Login Page:
-![LoginPage](https://github.com/user-attachments/assets/7a2c4173-90ea-4d16-afb1-be4d2ffd4e1d)
-Employee Leave Summary Page:
-<img width="949" alt="EmployeeLeaveSummary" src="https://github.com/user-attachments/assets/8e44a27a-4721-46ca-8a5e-dec37aa4080c">
+# Leave Management App
 
-Employee UpComing Holidays Page:
+## Screenshots
 
-<img width="677" alt="upComingHolidays" src="https://github.com/user-attachments/assets/d067624f-e82f-403d-affd-83d9cf4bd071">
+### 1. Login Page
+![Login Page](https://github.com/user-attachments/assets/7a2c4173-90ea-4d16-afb1-be4d2ffd4e1d)
 
-Employee Past Holidays Page :
+### 2. Employee Leave Summary Page
+<img width="949" alt="Employee Leave Summary Page" src="https://github.com/user-attachments/assets/8e44a27a-4721-46ca-8a5e-dec37aa4080c">
 
-<img width="659" alt="pastHolidays" src="https://github.com/user-attachments/assets/9ad1e5fd-2002-4835-9fe4-3ba1c47bca4e">
+### 3. Employee Upcoming Holidays Page
+<img width="677" alt="Employee Upcoming Holidays Page" src="https://github.com/user-attachments/assets/d067624f-e82f-403d-affd-83d9cf4bd071">
 
-Employee upComing and Past Leaves Page:
+### 4. Employee Past Holidays Page
+<img width="659" alt="Employee Past Holidays Page" src="https://github.com/user-attachments/assets/9ad1e5fd-2002-4835-9fe4-3ba1c47bca4e">
 
-<img width="653" alt="myUpcomingAndPastLeaves" src="https://github.com/user-attachments/assets/6cd24fe0-40f1-468f-9e34-bcbfb4ae8b26">
+### 5. Employee Upcoming and Past Leaves Page
+<img width="653" alt="Employee Upcoming and Past Leaves Page" src="https://github.com/user-attachments/assets/6cd24fe0-40f1-468f-9e34-bcbfb4ae8b26">
 
+### 6. Employee Applied Leaves Page
+<img width="946" alt="Employee Applied Leaves Page" src="https://github.com/user-attachments/assets/f0a77239-8626-4311-90ae-3b119607d023">
 
-Employee Applied Leaves Page :
-<img width="946" alt="Employee Applied Leaves" src="https://github.com/user-attachments/assets/f0a77239-8626-4311-90ae-3b119607d023">
+### 7. Employee Apply Leave Page
+<img width="914" alt="Employee Apply Leave Page" src="https://github.com/user-attachments/assets/63a119fd-9c6a-4dbb-9653-86eea0fb08a4">
 
-Employee ApplyLeave Page:
-<img width="914" alt="applyLeave" src="https://github.com/user-attachments/assets/63a119fd-9c6a-4dbb-9653-86eea0fb08a4">
+### 8. Success Applying Message
+<img width="721" alt="Success Applying Message" src="https://github.com/user-attachments/assets/9c0cdb4a-a3c4-400b-9386-023e25228059">
 
-Success Applying Message:
+### 9. Employee Profile Page
+<img width="262" alt="Employee Profile Page" src="https://github.com/user-attachments/assets/1e7db223-9e4c-4464-ba78-4ae2b7af1123">
 
- <img width="721" alt="appliedSuccess" src="https://github.com/user-attachments/assets/9c0cdb4a-a3c4-400b-9386-023e25228059">
+### 10. Team Leave Summary Page
+<img width="847" alt="Team Leave Summary Page" src="https://github.com/user-attachments/assets/e922abee-c262-40a9-8c63-1996436b69de">
 
-Employee Profile Page :
+### 11. Team Leave Requests Page
+<img width="919" alt="Team Leave Requests Page" src="https://github.com/user-attachments/assets/facd5b76-64d0-4e80-b807-95adb9b8ebb4">
 
-<img width="262" alt="profile Page" src="https://github.com/user-attachments/assets/1e7db223-9e4c-4464-ba78-4ae2b7af1123">
+### 12. Employee View Details Page
+<img width="356" alt="Employee View Details Page" src="https://github.com/user-attachments/assets/44198818-1312-419a-a6bb-6915221ec3a0">
 
+### 13. Success Approved Page
+<img width="385" alt="Success Approved Page" src="https://github.com/user-attachments/assets/aaef1627-4b51-446f-9b6a-2659dbcf933d">
 
-Team Leave Summary Page:
+## Validations
 
-<img width="847" alt="TeamLeaveSummary" src="https://github.com/user-attachments/assets/e922abee-c262-40a9-8c63-1996436b69de">
+### 1. Validation For Past Dates
+<img width="515" alt="Validation For Past Dates" src="https://github.com/user-attachments/assets/13abac79-8b36-4f0a-af78-254d6e70cf8d">
 
+### 2. Validation For Total Leaves
+<img width="450" alt="Validation For Total Leaves" src="https://github.com/user-attachments/assets/f821185a-2d77-45b5-9159-e9d739041bc5">
 
-Team Leave Requests Page:
-<img width="919" alt="TeamLeaveRequests" src="https://github.com/user-attachments/assets/facd5b76-64d0-4e80-b807-95adb9b8ebb4">
+### 3. Validation For Weekend Dates
+<img width="434" alt="Validation For Weekend Dates" src="https://github.com/user-attachments/assets/58e5cbcc-8b4c-484a-81ad-fe13811438ca">
 
-Employee view Details Page
-
-<img width="356" alt="EmployeeDetails" src="https://github.com/user-attachments/assets/44198818-1312-419a-a6bb-6915221ec3a0">
-
-Success Approved Page:
-
-<img width="385" alt="approveSuccessPage" src="https://github.com/user-attachments/assets/aaef1627-4b51-446f-9b6a-2659dbcf933d">
-
-
-Validations :
-
-1. Validation For PreDate:
-   <img width="515" alt="validationForPastTime" src="https://github.com/user-attachments/assets/13abac79-8b36-4f0a-af78-254d6e70cf8d">
-
-2. Validation For TotalLeaves:
-   <img width="450" alt="validationForTotalLeaves" src="https://github.com/user-attachments/assets/f821185a-2d77-45b5-9159-e9d739041bc5">
-
-3.Validation For Weekend Date:
-
-<img width="434" alt="validationForWeekends" src="https://github.com/user-attachments/assets/58e5cbcc-8b4c-484a-81ad-fe13811438ca">
-
-4.Validation For Approving Leave Request:
-
-<img width="434" alt="managerAcceptValidation" src="https://github.com/user-attachments/assets/534b7261-1c1d-492d-b616-83e62dddfe4a">
+### 4. Validation For Approving Leave Requests
+<img width="434" alt="Validation For Approving Leave Requests" src="https://github.com/user-attachments/assets/534b7261-1c1d-492d-b616-83e62dddfe4a">
