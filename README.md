@@ -72,7 +72,7 @@ Employee Past Holidays Page :
 
 <img width="659" alt="pastHolidays" src="https://github.com/user-attachments/assets/9ad1e5fd-2002-4835-9fe4-3ba1c47bca4e">
 
-Employee AppliedLeaves Page :
+Employee Applied Leaves Page :
 <img width="946" alt="Employee Applied Leaves" src="https://github.com/user-attachments/assets/f0a77239-8626-4311-90ae-3b119607d023">
 
 Employee ApplyLeave Page:
@@ -87,12 +87,12 @@ Employee Profile Page :
 <img width="262" alt="profile Page" src="https://github.com/user-attachments/assets/1e7db223-9e4c-4464-ba78-4ae2b7af1123">
 
 
-Team Leave Summary
+Team Leave Summary Page:
 
 <img width="847" alt="TeamLeaveSummary" src="https://github.com/user-attachments/assets/e922abee-c262-40a9-8c63-1996436b69de">
 
 
-Team Leave Requests
+Team Leave Requests Page:
 <img width="919" alt="TeamLeaveRequests" src="https://github.com/user-attachments/assets/facd5b76-64d0-4e80-b807-95adb9b8ebb4">
 
 Employee view Details Page
