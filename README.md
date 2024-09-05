@@ -65,9 +65,11 @@ Employee Leave Summary Page:
 <img width="949" alt="EmployeeLeaveSummary" src="https://github.com/user-attachments/assets/8e44a27a-4721-46ca-8a5e-dec37aa4080c">
 
 Employee UpComing Holidays Page:
+
 <img width="677" alt="upComingHolidays" src="https://github.com/user-attachments/assets/d067624f-e82f-403d-affd-83d9cf4bd071">
 
 Employee Past Holidays Page :
+
 <img width="659" alt="pastHolidays" src="https://github.com/user-attachments/assets/9ad1e5fd-2002-4835-9fe4-3ba1c47bca4e">
 
 Employee AppliedLeaves Page :
