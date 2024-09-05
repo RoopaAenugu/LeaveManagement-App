@@ -88,6 +88,7 @@ Employee Profile Page :
 
 
 Team Leave Summary
+
 <img width="847" alt="TeamLeaveSummary" src="https://github.com/user-attachments/assets/e922abee-c262-40a9-8c63-1996436b69de">
 
 
