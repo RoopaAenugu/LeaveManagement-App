@@ -206,6 +206,10 @@ Success Approved Page:
 
 <img width="385" alt="approveSuccessPage" src="https://github.com/user-attachments/assets/aaef1627-4b51-446f-9b6a-2659dbcf933d">
 
+Success Rejected Page :
+
+<img width="346" alt="successLeaveReject" src="https://github.com/user-attachments/assets/400b1030-43a2-4e30-b7ad-b944e28e2ce4">
+
 
 Validations :
 
