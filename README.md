@@ -99,6 +99,9 @@ Employee view Details Page
 
 <img width="356" alt="EmployeeDetails" src="https://github.com/user-attachments/assets/44198818-1312-419a-a6bb-6915221ec3a0">
 
+Success Approved Page:
+
+<img width="385" alt="approveSuccessPage" src="https://github.com/user-attachments/assets/aaef1627-4b51-446f-9b6a-2659dbcf933d">
 
 
 Validations :
@@ -111,3 +114,7 @@ Validations :
 3.Validation For Weekend Date:
 
 <img width="434" alt="validationForWeekends" src="https://github.com/user-attachments/assets/58e5cbcc-8b4c-484a-81ad-fe13811438ca">
+
+4.Validation For Approving Leave Request:
+
+<img width="434" alt="managerAcceptValidation" src="https://github.com/user-attachments/assets/534b7261-1c1d-492d-b616-83e62dddfe4a">
