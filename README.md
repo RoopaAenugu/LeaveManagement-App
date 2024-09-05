@@ -80,11 +80,13 @@ Employee Profile Page :
 
 Team Leave Summary
 
-<img width="919" alt="TeamLeaveSummary" src="https://github.com/user-attachments/assets/b24d9deb-0e2d-4a18-bdc8-4e7b861828aa">
+<img width="847" alt="TeamLeaveSummary" src="https://github.com/user-attachments/assets/e922abee-c262-40a9-8c63-1996436b69de">
 
 
 Team Leave Requests
-<img width="941" alt="TeamLeaveRequest" src="https://github.com/user-attachments/assets/40452d64-a616-44f9-b89f-31e3aa52822b">
+
+<img width="919" alt="TeamLeaveRequests" src="https://github.com/user-attachments/assets/facd5b76-64d0-4e80-b807-95adb9b8ebb4">
+
 
 Validations :
 1. Validation For PreDate:
