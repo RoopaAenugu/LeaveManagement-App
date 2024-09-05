@@ -74,18 +74,20 @@ Success Applying Message:
  <img width="721" alt="appliedSuccess" src="https://github.com/user-attachments/assets/9c0cdb4a-a3c4-400b-9386-023e25228059">
 
 Employee Profile Page :
-
 <img width="262" alt="profile Page" src="https://github.com/user-attachments/assets/1e7db223-9e4c-4464-ba78-4ae2b7af1123">
 
 
 Team Leave Summary
-
 <img width="847" alt="TeamLeaveSummary" src="https://github.com/user-attachments/assets/e922abee-c262-40a9-8c63-1996436b69de">
 
 
 Team Leave Requests
-
 <img width="919" alt="TeamLeaveRequests" src="https://github.com/user-attachments/assets/facd5b76-64d0-4e80-b807-95adb9b8ebb4">
+
+Employee view Details Page
+
+<img width="356" alt="EmployeeDetails" src="https://github.com/user-attachments/assets/44198818-1312-419a-a6bb-6915221ec3a0">
+
 
 
 Validations :
