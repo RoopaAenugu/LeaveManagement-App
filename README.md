@@ -201,6 +201,11 @@ Managers must review the following details before approving or rejecting a leave
 ### 13. Success Approved Page
 <img width="385" alt="Success Approved Page" src="https://github.com/user-attachments/assets/aaef1627-4b51-446f-9b6a-2659dbcf933d">
 
+
+### 14. Success Rejected Page
+<img width="346" alt="successLeaveReject" src="https://github.com/user-attachments/assets/400b1030-43a2-4e30-b7ad-b944e28e2ce4">
+
+
 ## Validations
 
 ### 1. Validation For Past Dates
@@ -212,36 +217,7 @@ Managers must review the following details before approving or rejecting a leave
 ### 3. Validation For Weekend Dates
 <img width="434" alt="Validation For Weekend Dates" src="https://github.com/user-attachments/assets/58e5cbcc-8b4c-484a-81ad-fe13811438ca">
 
-<<<<<<< HEAD
+
 ### 4. Validation For Approving Leave Requests
 <img width="434" alt="Validation For Approving Leave Requests" src="https://github.com/user-attachments/assets/534b7261-1c1d-492d-b616-83e62dddfe4a">
-=======
-Employee view Details Page
 
-<img width="356" alt="EmployeeDetails" src="https://github.com/user-attachments/assets/44198818-1312-419a-a6bb-6915221ec3a0">
-
-Success Approved Page:
-
-<img width="385" alt="approveSuccessPage" src="https://github.com/user-attachments/assets/aaef1627-4b51-446f-9b6a-2659dbcf933d">
-
-Success Rejected Page :
-
-<img width="346" alt="successLeaveReject" src="https://github.com/user-attachments/assets/400b1030-43a2-4e30-b7ad-b944e28e2ce4">
-
-
-Validations :
-
-1. Validation For PreDate:
-   <img width="515" alt="validationForPastTime" src="https://github.com/user-attachments/assets/13abac79-8b36-4f0a-af78-254d6e70cf8d">
-
-2. Validation For TotalLeaves:
-   <img width="450" alt="validationForTotalLeaves" src="https://github.com/user-attachments/assets/f821185a-2d77-45b5-9159-e9d739041bc5">
-
-3.Validation For Weekend Date:
-
-<img width="434" alt="validationForWeekends" src="https://github.com/user-attachments/assets/58e5cbcc-8b4c-484a-81ad-fe13811438ca">
-
-4.Validation For Approving Leave Request:
-
-<img width="434" alt="managerAcceptValidation" src="https://github.com/user-attachments/assets/534b7261-1c1d-492d-b616-83e62dddfe4a">
->>>>>>> 7f5eca0cf7e90171110247de5f25050a3c3c119e
