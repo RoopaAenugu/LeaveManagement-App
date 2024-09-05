@@ -157,6 +157,7 @@ Managers must review the following details before approving or rejecting a leave
 - **Network or Server Issues**: If an error occurs during the approval or rejection process, the manager will receive an error message indicating a failure in processing the request.
    - **Error Message**: `"An error occurred while processing the leave request. Please try again later or contact support."`
 
+
 # Leave Management App
 
 ## Screenshots
