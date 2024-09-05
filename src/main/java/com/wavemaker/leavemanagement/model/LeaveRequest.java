@@ -35,16 +35,16 @@ public class LeaveRequest {
         return leaveId;
     }
 
+    public void setLeaveId(int leaveId) {
+        this.leaveId = leaveId;
+    }
+
     public LocalDate getCurrentDate() {
         return currentDate;
     }
 
     public void setCurrentDate(LocalDate currentDate) {
         this.currentDate = currentDate;
-    }
-
-    public void setLeaveId(int leaveId) {
-        this.leaveId = leaveId;
     }
 
     public int getEmployeeId() {

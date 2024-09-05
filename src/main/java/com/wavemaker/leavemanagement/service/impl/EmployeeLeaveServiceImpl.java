@@ -5,10 +5,7 @@ import com.wavemaker.leavemanagement.exception.ServerUnavailableException;
 import com.wavemaker.leavemanagement.factory.EmployeeLeaveRepositoryGlobalInstance;
 import com.wavemaker.leavemanagement.model.EmployeeLeave;
 import com.wavemaker.leavemanagement.model.LeaveRequest;
-import com.wavemaker.leavemanagement.repository.EmployeeCookieRepository;
 import com.wavemaker.leavemanagement.repository.EmployeeLeaveRepository;
-import com.wavemaker.leavemanagement.repository.impl.EmployeeCookieRepositoryImpl;
-import com.wavemaker.leavemanagement.repository.impl.EmployeeLeaveRepositoryImpl;
 import com.wavemaker.leavemanagement.service.EmployeeLeaveService;
 
 import java.sql.SQLException;

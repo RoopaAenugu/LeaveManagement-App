@@ -1,8 +1,6 @@
 package com.wavemaker.leavemanagement.factory;
 
-import com.wavemaker.leavemanagement.repository.EmployeeRepository;
 import com.wavemaker.leavemanagement.repository.HolidayRepository;
-import com.wavemaker.leavemanagement.repository.impl.EmployeeRepositoryImpl;
 import com.wavemaker.leavemanagement.repository.impl.HolidayRepositoryImpl;
 
 public class HolidayGlobalInstance {

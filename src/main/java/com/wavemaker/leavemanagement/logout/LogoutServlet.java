@@ -21,7 +21,7 @@ public class LogoutServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException{
+            throws IOException {
         // Invalidate the session
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -38,7 +38,7 @@ public class LogoutServlet extends HttpServlet {
                     response.addCookie(cookie);
 
                     // Remove the cookie from the server (if applicable)
-                   employeeCookieService.removeCookie(cookie.getValue());
+                    employeeCookieService.removeCookie(cookie.getValue());
                     break;
                 }
             }

@@ -425,6 +425,7 @@ async function rejectLeave(buttonElement) {
         if (!response.ok) throw new Error('Network response was not ok');
         await response.json();
         fetchMyTeamLeaves("ALL");
+        openModal("Success", "Leave rejected successfully!");
     } catch (error) {
         console.error('Error rejecting leave:', error);
     }
@@ -446,7 +447,7 @@ async function viewEmployeeDetails(button) {
 
     function populateEmployeeDetailsAndSummaryLeaves(employeeDetails) {
 
-     document.getElementById("employee-details-dialog").style.display = "block";
+    document.getElementById("employee-details-dialog").style.display = "block";
     console.log("employeeDetails", employeeDetails);
         document.getElementById("Name").innerText = employeeDetails.empName;
         document.getElementById("employeeEmail").innerText = employeeDetails.email;

@@ -17,6 +17,10 @@ public class EmployeeLeaveSummary {
         return summaryId;
     }
 
+    public void setSummaryId(int summaryId) {
+        this.summaryId = summaryId;
+    }
+
     public String getEmpName() {
         return empName;
     }
@@ -31,10 +35,6 @@ public class EmployeeLeaveSummary {
 
     public void setTotalAllocatedLeaves(int totalAllocatedLeaves) {
         this.totalAllocatedLeaves = totalAllocatedLeaves;
-    }
-
-    public void setSummaryId(int summaryId) {
-        this.summaryId = summaryId;
     }
 
     // Getter and Setter for employeeId

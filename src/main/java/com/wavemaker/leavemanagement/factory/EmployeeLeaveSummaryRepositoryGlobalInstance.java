@@ -1,7 +1,6 @@
 package com.wavemaker.leavemanagement.factory;
 
 import com.wavemaker.leavemanagement.repository.EmployeeLeaveSummaryRepository;
-import com.wavemaker.leavemanagement.repository.impl.EmployeeLeaveRepositoryImpl;
 import com.wavemaker.leavemanagement.repository.impl.EmployeeLeaveSummaryRepositoryImpl;
 
 public class EmployeeLeaveSummaryRepositoryGlobalInstance {

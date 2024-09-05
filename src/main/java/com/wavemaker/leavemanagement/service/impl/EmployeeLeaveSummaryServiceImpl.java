@@ -4,10 +4,7 @@ import com.wavemaker.leavemanagement.exception.ServerUnavailableException;
 import com.wavemaker.leavemanagement.factory.EmployeeLeaveSummaryRepositoryGlobalInstance;
 import com.wavemaker.leavemanagement.model.EmployeeLeaveSummary;
 import com.wavemaker.leavemanagement.model.Holiday;
-import com.wavemaker.leavemanagement.repository.EmployeeLeaveRepository;
 import com.wavemaker.leavemanagement.repository.EmployeeLeaveSummaryRepository;
-import com.wavemaker.leavemanagement.repository.impl.EmployeeLeaveRepositoryImpl;
-import com.wavemaker.leavemanagement.repository.impl.EmployeeLeaveSummaryRepositoryImpl;
 import com.wavemaker.leavemanagement.service.EmployeeLeaveSummaryService;
 
 import java.util.List;
@@ -22,7 +19,7 @@ public class EmployeeLeaveSummaryServiceImpl implements EmployeeLeaveSummaryServ
 
     @Override
     public List<EmployeeLeaveSummary> getEmployeeLeaveSummaryByEmpId(int employeeId) throws ServerUnavailableException {
-       return employeeLeaveSummaryRepository.getEmployeeLeaveSummaryByEmpId(employeeId);
+        return employeeLeaveSummaryRepository.getEmployeeLeaveSummaryByEmpId(employeeId);
     }
 
     @Override

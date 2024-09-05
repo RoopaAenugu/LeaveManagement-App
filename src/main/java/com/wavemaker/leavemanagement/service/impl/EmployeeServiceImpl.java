@@ -5,11 +5,7 @@ import com.wavemaker.leavemanagement.factory.EmployeeRepositoryGlobalInstance;
 import com.wavemaker.leavemanagement.model.Employee;
 import com.wavemaker.leavemanagement.model.EmployeeLeave;
 import com.wavemaker.leavemanagement.model.EmployeeManager;
-import com.wavemaker.leavemanagement.model.LeaveRequest;
-import com.wavemaker.leavemanagement.repository.EmployeeLeaveRepository;
 import com.wavemaker.leavemanagement.repository.EmployeeRepository;
-import com.wavemaker.leavemanagement.repository.impl.EmployeeLeaveRepositoryImpl;
-import com.wavemaker.leavemanagement.repository.impl.EmployeeRepositoryImpl;
 import com.wavemaker.leavemanagement.service.EmployeeService;
 
 import java.util.List;
@@ -19,7 +15,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     // Constructor to inject UserCookieTaskRepository
     public EmployeeServiceImpl() {
-        this.employeeRepository = EmployeeRepositoryGlobalInstance .getEmployeeRepositoryInstance();
+        this.employeeRepository = EmployeeRepositoryGlobalInstance.getEmployeeRepositoryInstance();
     }
 
 
@@ -30,13 +26,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public boolean checkManager(String emailId) throws ServerUnavailableException {
-      return  employeeRepository.checkManager(emailId);
+        return employeeRepository.checkManager(emailId);
     }
 
     @Override
     public Employee getEmployeeByLoginId(int loginId) throws ServerUnavailableException {
         return employeeRepository.getEmployeeByLoginId(loginId);
     }
+
     @Override
     public List<Integer> getEmpIdUnderManager(int managerId) throws ServerUnavailableException {
         return employeeRepository.getEmpIdUnderManager(managerId);

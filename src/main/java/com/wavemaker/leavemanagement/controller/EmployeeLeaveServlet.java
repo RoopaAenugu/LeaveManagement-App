@@ -4,9 +4,16 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wavemaker.leavemanagement.constants.LeaveRequestStatus;
 import com.wavemaker.leavemanagement.exception.ServerUnavailableException;
-import com.wavemaker.leavemanagement.model.*;
-import com.wavemaker.leavemanagement.service.*;
-import com.wavemaker.leavemanagement.service.impl.*;
+import com.wavemaker.leavemanagement.model.Employee;
+import com.wavemaker.leavemanagement.model.EmployeeLeave;
+import com.wavemaker.leavemanagement.model.EmployeeLeaveSummary;
+import com.wavemaker.leavemanagement.model.LeaveRequest;
+import com.wavemaker.leavemanagement.service.EmployeeLeaveService;
+import com.wavemaker.leavemanagement.service.EmployeeLeaveSummaryService;
+import com.wavemaker.leavemanagement.service.EmployeeService;
+import com.wavemaker.leavemanagement.service.impl.EmployeeLeaveServiceImpl;
+import com.wavemaker.leavemanagement.service.impl.EmployeeLeaveSummaryServiceImpl;
+import com.wavemaker.leavemanagement.service.impl.EmployeeServiceImpl;
 import com.wavemaker.leavemanagement.util.LocalDateAdapter;
 import com.wavemaker.leavemanagement.util.LocalTimeAdapter;
 import jakarta.servlet.annotation.WebServlet;
@@ -86,60 +93,62 @@ public class EmployeeLeaveServlet extends HttpServlet {
         }
         try {
             HttpSession session = request.getSession(false);
-            if (session != null) {
-                Integer loginId = (Integer) session.getAttribute("loginId");
-                if (loginId != null) {
-                    // Read the request body once
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    try (BufferedReader reader = request.getReader()) {
-                        while ((line = reader.readLine()) != null) {
-                            stringBuilder.append(line);
-                        }
-                    }
-                    String requestBody = stringBuilder.toString();
-                    EmployeeLeave employeeLeave = gson.fromJson(requestBody, EmployeeLeave.class);
-                    LeaveRequest leaveRequest = gson.fromJson(requestBody, LeaveRequest.class);
-                    employee = employeeService.getEmployeeByLoginId(loginId);
-                    if (employee != null) {
-                        int leaveTypeId = employeeLeaveService.getLeaveTypeId(leaveType);
-                        leaveRequest.setLeaveTypeId(leaveTypeId);
-                        employeeLeave.setLeaveTypeId(leaveTypeId);
-                        employeeLeave.setLeaveType(leaveType);
-                        leaveRequest.setEmployeeId(employee.getEmployeeId());
-                        leaveRequest.setManagerId(employee.getManagerId());
-                        employeeLeave.setEmployeeId(employee.getEmployeeId());
-                        employeeLeave.setManagerId(employee.getManagerId());
-                        int numberOfLeavesAllocated = employeeLeaveService.getNumberOfLeavesAllocated(employeeLeave.getLeaveType());
-                        logger.info("Final Leave limit for type '{}' is: {} ", employeeLeave.getLeaveType(), numberOfLeavesAllocated);
-                        employeeLeave.setTypeLimit(numberOfLeavesAllocated);
-                        int totalNumberOfLeavesTaken = employeeLeaveService.getTotalNumberOfLeavesTaken(employee.getEmployeeId(), leaveTypeId);
-                        logger.info("Total Leaves Taken: {}", totalNumberOfLeavesTaken);
-                        employeeLeave.setTotalEmployeeLeavesTaken(totalNumberOfLeavesTaken);
-                        leaveRequest.setStatus("PENDING");
-                        // Apply the leave request
-                        LeaveRequest addLeaveRequest = employeeLeaveService.applyLeave(leaveRequest);
-                        if (addLeaveRequest != null) {
-                            EmployeeLeaveSummary employeeSummary = new EmployeeLeaveSummary();
-                            employeeSummary.setEmployeeId(addLeaveRequest.getEmployeeId());
-                            employeeSummary.setLeaveType(leaveType);
-                            employeeSummary.setLeaveTypeId(addLeaveRequest.getLeaveTypeId());
-                            employeeSummary.setTotalAllocatedLeaves(numberOfLeavesAllocated);
-                            EmployeeLeaveSummary addEmployeeLeaveSummary = employeeLeaveSummaryService.addEmployeeLeaveSummary(employeeSummary);
-                            jsonResponse = gson.toJson(employeeLeave);
-                            writeResponse(response, jsonResponse);
-                        } else {
-                            writeResponse(response, "Failed to apply leave request.");
-                        }
-                    } else {
-                        writeResponse(response, "Employee not found.");
-                    }
-                } else {
-                    writeResponse(response, "User is not present.");
-                }
-            } else {
-                writeResponse(response, "Session is not valid.");
+            if (session == null) {
+                writeResponse(response, "User is not logged");
+                return;
             }
+            Integer loginId = (Integer) session.getAttribute("loginId");
+            if (loginId == null) {
+                writeResponse(response, "User is not present.");
+                return;
+            }
+            // Read the request body once
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            try (BufferedReader reader = request.getReader()) {
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line);
+                }
+            }
+            String requestBody = stringBuilder.toString();
+            EmployeeLeave employeeLeave = gson.fromJson(requestBody, EmployeeLeave.class);
+            LeaveRequest leaveRequest = gson.fromJson(requestBody, LeaveRequest.class);
+            employee = employeeService.getEmployeeByLoginId(loginId);
+            if (employee == null) {
+                writeResponse(response, "Employee not found.");
+                return;
+            }
+            int leaveTypeId = employeeLeaveService.getLeaveTypeId(leaveType);
+            leaveRequest.setLeaveTypeId(leaveTypeId);
+            employeeLeave.setLeaveTypeId(leaveTypeId);
+            employeeLeave.setLeaveType(leaveType);
+            leaveRequest.setEmployeeId(employee.getEmployeeId());
+            leaveRequest.setManagerId(employee.getManagerId());
+            employeeLeave.setEmployeeId(employee.getEmployeeId());
+            employeeLeave.setManagerId(employee.getManagerId());
+            int numberOfLeavesAllocated = employeeLeaveService.getNumberOfLeavesAllocated(employeeLeave.getLeaveType());
+            logger.info("Final Leave limit for type '{}' is: {} ", employeeLeave.getLeaveType(), numberOfLeavesAllocated);
+            employeeLeave.setTypeLimit(numberOfLeavesAllocated);
+            int totalNumberOfLeavesTaken = employeeLeaveService.getTotalNumberOfLeavesTaken(employee.getEmployeeId(), leaveTypeId);
+            logger.info("Total Leaves Taken: {}", totalNumberOfLeavesTaken);
+            employeeLeave.setTotalEmployeeLeavesTaken(totalNumberOfLeavesTaken);
+            leaveRequest.setStatus("PENDING");
+            // Apply the leave request
+            LeaveRequest addLeaveRequest = employeeLeaveService.applyLeave(leaveRequest);
+            if (addLeaveRequest == null) {
+                writeResponse(response, "Failed to apply leave request.");
+                return;
+            }
+            EmployeeLeaveSummary employeeSummary = new EmployeeLeaveSummary();
+            employeeSummary.setEmployeeId(addLeaveRequest.getEmployeeId());
+            employeeSummary.setLeaveType(leaveType);
+            employeeSummary.setLeaveTypeId(addLeaveRequest.getLeaveTypeId());
+            employeeSummary.setTotalAllocatedLeaves(numberOfLeavesAllocated);
+            employeeLeaveSummaryService.addEmployeeLeaveSummary(employeeSummary);
+            jsonResponse = gson.toJson(employeeLeave);
+            writeResponse(response, jsonResponse);
+
+
         } catch (ServerUnavailableException e) {
             jsonResponse = "Service temporarily unavailable. Please try again later.";
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -247,7 +256,7 @@ public class EmployeeLeaveServlet extends HttpServlet {
                             employeeLeaveSummary.setEmployeeId(employeeLeave.getEmployeeId());
                             int numberOfLeavesAllocated = employeeLeaveService.getNumberOfLeavesAllocated(leaveType);
                             employeeLeaveSummary.setTotalAllocatedLeaves(numberOfLeavesAllocated);
-                            boolean updatedEmployeeLeaveSummary = employeeLeaveSummaryService.updateEmployeeLeaveSummary(employeeLeaveSummary);
+                            employeeLeaveSummaryService.updateEmployeeLeaveSummary(employeeLeaveSummary);
                             jsonResponse = gson.toJson(employeeLeave);
                             writeResponse(response, jsonResponse);
                         } else {

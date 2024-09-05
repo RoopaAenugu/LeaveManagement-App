@@ -48,16 +48,16 @@ public class EmployeeLeave extends LeaveRequest {
         return totalEmployeeLeavesTaken;
     }
 
+    public void setTotalEmployeeLeavesTaken(int totalEmployeeLeavesTaken) {
+        this.totalEmployeeLeavesTaken = totalEmployeeLeavesTaken;
+    }
+
     public String getLeaveType() {
         return leaveType;
     }
 
     public void setLeaveType(String leaveType) {
         this.leaveType = leaveType;
-    }
-
-    public void setTotalEmployeeLeavesTaken(int totalEmployeeLeavesTaken) {
-        this.totalEmployeeLeavesTaken = totalEmployeeLeavesTaken;
     }
 
     public int getTypeLimit() {

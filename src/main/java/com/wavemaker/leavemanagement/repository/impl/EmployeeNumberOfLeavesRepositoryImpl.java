@@ -1,12 +1,12 @@
 package com.wavemaker.leavemanagement.repository.impl;
 
+import com.wavemaker.leavemanagement.repository.EmployeeNumberOfLeavesRepository;
+import com.wavemaker.leavemanagement.util.DbConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import com.wavemaker.leavemanagement.repository.EmployeeNumberOfLeavesRepository;
-import com.wavemaker.leavemanagement.util.DbConnection;
 
 public class EmployeeNumberOfLeavesRepositoryImpl implements EmployeeNumberOfLeavesRepository {
 

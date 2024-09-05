@@ -1,7 +1,10 @@
 package com.wavemaker.leavemanagement.repository.impl;
 
 import com.wavemaker.leavemanagement.exception.ServerUnavailableException;
-import com.wavemaker.leavemanagement.model.*;
+import com.wavemaker.leavemanagement.model.Employee;
+import com.wavemaker.leavemanagement.model.EmployeeLeave;
+import com.wavemaker.leavemanagement.model.EmployeeLeaveSummary;
+import com.wavemaker.leavemanagement.model.EmployeeManager;
 import com.wavemaker.leavemanagement.repository.EmployeeRepository;
 import com.wavemaker.leavemanagement.util.DbConnection;
 import jakarta.servlet.http.HttpServletResponse;

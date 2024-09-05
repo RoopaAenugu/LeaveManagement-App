@@ -2,16 +2,8 @@ package com.wavemaker.leavemanagement.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.wavemaker.leavemanagement.exception.ServerUnavailableException;
 import com.wavemaker.leavemanagement.model.Holiday;
-import com.wavemaker.leavemanagement.repository.HolidayRepository;
-import com.wavemaker.leavemanagement.service.EmployeeLeaveService;
-import com.wavemaker.leavemanagement.service.EmployeeLeaveSummaryService;
-import com.wavemaker.leavemanagement.service.EmployeeService;
 import com.wavemaker.leavemanagement.service.HolidayService;
-import com.wavemaker.leavemanagement.service.impl.EmployeeLeaveServiceImpl;
-import com.wavemaker.leavemanagement.service.impl.EmployeeLeaveSummaryServiceImpl;
-import com.wavemaker.leavemanagement.service.impl.EmployeeServiceImpl;
 import com.wavemaker.leavemanagement.service.impl.HolidayServiceImpl;
 import com.wavemaker.leavemanagement.util.LocalDateAdapter;
 import com.wavemaker.leavemanagement.util.LocalTimeAdapter;
@@ -56,23 +48,23 @@ public class HolidaysServlet extends HttpServlet {
 
         }
     }
-        private void writeResponse(HttpServletResponse response, String jsonResponse) {
-            PrintWriter printWriter = null;
-            try {
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                printWriter = response.getWriter();
-                printWriter.print(jsonResponse);
-                printWriter.flush();
-            } catch (IOException e) {
-                jsonResponse = "server Unavailable";
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                printWriter.print(jsonResponse);
-                printWriter.flush();
 
-            }
+    private void writeResponse(HttpServletResponse response, String jsonResponse) {
+        PrintWriter printWriter = null;
+        try {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            printWriter = response.getWriter();
+            printWriter.print(jsonResponse);
+            printWriter.flush();
+        } catch (IOException e) {
+            jsonResponse = "server Unavailable";
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            printWriter.print(jsonResponse);
+            printWriter.flush();
+
         }
-
-
-
     }
+
+
+}

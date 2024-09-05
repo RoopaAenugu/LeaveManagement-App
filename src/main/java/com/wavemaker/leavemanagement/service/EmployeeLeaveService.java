@@ -10,13 +10,21 @@ import java.util.List;
 
 public interface EmployeeLeaveService {
     public LeaveRequest applyLeave(LeaveRequest leaveRequest) throws ServerUnavailableException;
+
     public List<EmployeeLeave> getAppliedLeaves(int empId, LeaveRequestStatus status) throws ServerUnavailableException;
-    public  EmployeeLeave acceptLeaveRequest( int leaveId) throws ServerUnavailableException;
+
+    public EmployeeLeave acceptLeaveRequest(int leaveId) throws ServerUnavailableException;
+
     public LeaveRequest rejectLeaveRequest(int leaveId) throws ServerUnavailableException;
+
     public List<EmployeeLeave> getLeavesOfEmployees(List<Integer> employeeIds, LeaveRequestStatus status) throws ServerUnavailableException;
+
     public int getNumberOfLeavesAllocated(String leaveType);
-    public int  getTotalNumberOfLeavesTaken(int empId,int leaveTypeId) throws SQLException;
+
+    public int getTotalNumberOfLeavesTaken(int empId, int leaveTypeId) throws SQLException;
+
     public int getLeaveTypeId(String leaveType) throws ServerUnavailableException;
+
     public String getLeaveType(int leaveTypeId) throws ServerUnavailableException;
 
 }

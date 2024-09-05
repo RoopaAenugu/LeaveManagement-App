@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
 
 public class LoginCredentialRepositoryImpl implements LoginCredentialRepository {
     private static final Logger logger = LoggerFactory.getLogger(LoginCredentialRepositoryImpl.class);
@@ -19,7 +18,7 @@ public class LoginCredentialRepositoryImpl implements LoginCredentialRepository 
     public int isValidate(LoginCredential loginCredential) {
         String query = "SELECT * FROM LOGIN_CREDENTIALS WHERE EMAILID=? AND PASSWORD=?";
         try (Connection connection = DbConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query))  {
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setString(1, loginCredential.getEmailId());
             preparedStatement.setString(2, loginCredential.getPassword());

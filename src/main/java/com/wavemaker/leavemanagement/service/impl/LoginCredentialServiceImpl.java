@@ -7,9 +7,11 @@ import com.wavemaker.leavemanagement.service.LoginCredentialService;
 
 public class LoginCredentialServiceImpl implements LoginCredentialService {
     private final LoginCredentialRepository loginCredentialRepository;
-    public LoginCredentialServiceImpl(){
+
+    public LoginCredentialServiceImpl() {
         this.loginCredentialRepository = LoginCredentialRepositoryGlobalInstance.getLoginCredentialRepositoryInstance();
     }
+
     @Override
     public int isValidate(LoginCredential loginCredential) {
         return loginCredentialRepository.isValidate(loginCredential);

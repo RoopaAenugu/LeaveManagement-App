@@ -1,4 +1,5 @@
 package com.wavemaker.leavemanagement.model;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
