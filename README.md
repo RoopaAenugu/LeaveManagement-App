@@ -64,6 +64,12 @@ Login Page:
 Employee Leave Summary Page:
 <img width="949" alt="EmployeeLeaveSummary" src="https://github.com/user-attachments/assets/8e44a27a-4721-46ca-8a5e-dec37aa4080c">
 
+Employee UpComing Holidays Page:
+<img width="677" alt="upComingHolidays" src="https://github.com/user-attachments/assets/d067624f-e82f-403d-affd-83d9cf4bd071">
+
+Employee Past Holidays Page :
+<img width="659" alt="pastHolidays" src="https://github.com/user-attachments/assets/9ad1e5fd-2002-4835-9fe4-3ba1c47bca4e">
+
 Employee AppliedLeaves Page :
 <img width="928" alt="Employee Applied Leaves" src="https://github.com/user-attachments/assets/fa66cadb-78d9-42f0-a91e-29ad4558d33c">
 
@@ -71,9 +77,11 @@ Employee ApplyLeave Page:
 <img width="914" alt="applyLeave" src="https://github.com/user-attachments/assets/63a119fd-9c6a-4dbb-9653-86eea0fb08a4">
 
 Success Applying Message:
+
  <img width="721" alt="appliedSuccess" src="https://github.com/user-attachments/assets/9c0cdb4a-a3c4-400b-9386-023e25228059">
 
 Employee Profile Page :
+
 <img width="262" alt="profile Page" src="https://github.com/user-attachments/assets/1e7db223-9e4c-4464-ba78-4ae2b7af1123">
 
 
