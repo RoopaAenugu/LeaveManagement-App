@@ -1,14 +1,51 @@
 package com.wavemaker.leavemanagement.model;
 
+import java.util.List;
+
 public class EmployeeLeave extends LeaveRequest {
     private String empName;
     private int typeLimit;
     private String leaveType;
-    private int totalEmployeeLeaves;
+    private int totalEmployeeLeavesTaken;
+    private int pendingLeaves;
+    private String email;
+    private long phoneNumber;
+    private List<EmployeeLeaveSummary> employeeLeaveSummaries;
 
+    public List<EmployeeLeaveSummary> getEmployeeLeaveSummaries() {
+        return employeeLeaveSummaries;
+    }
 
-    public int getTotalEmployeeLeaves() {
-        return totalEmployeeLeaves;
+    public void setEmployeeLeaveSummaries(List<EmployeeLeaveSummary> employeeLeaveSummaries) {
+        this.employeeLeaveSummaries = employeeLeaveSummaries;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public long getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(long phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public int getPendingLeaves() {
+        return pendingLeaves;
+    }
+
+    public void setPendingLeaves(int pendingLeaves) {
+        this.pendingLeaves = pendingLeaves;
+    }
+
+    public int getTotalEmployeeLeavesTaken() {
+        return totalEmployeeLeavesTaken;
     }
 
     public String getLeaveType() {
@@ -19,8 +56,8 @@ public class EmployeeLeave extends LeaveRequest {
         this.leaveType = leaveType;
     }
 
-    public void setTotalEmployeeLeavesTaken(int totalEmployeeLeaves) {
-        this.totalEmployeeLeaves = totalEmployeeLeaves;
+    public void setTotalEmployeeLeavesTaken(int totalEmployeeLeavesTaken) {
+        this.totalEmployeeLeavesTaken = totalEmployeeLeavesTaken;
     }
 
     public int getTypeLimit() {

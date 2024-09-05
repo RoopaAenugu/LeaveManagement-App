@@ -1,10 +1,10 @@
 package com.wavemaker.leavemanagement.repository.impl;
 
-import com.wavemaker.leavemanagement.model.Employee;
-import com.wavemaker.leavemanagement.model.EmployeeManager;
-import com.wavemaker.leavemanagement.model.LeaveRequest;
+import com.wavemaker.leavemanagement.exception.ServerUnavailableException;
+import com.wavemaker.leavemanagement.model.*;
 import com.wavemaker.leavemanagement.repository.EmployeeRepository;
 import com.wavemaker.leavemanagement.util.DbConnection;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -45,7 +45,24 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
                     "FROM EMPLOYEES e " +
                     "LEFT JOIN EMPLOYEES m ON e.MANAGER_ID = m.EMPLOYEE_ID " +
                     "WHERE e.EMPLOYEE_ID = ?";
-
+    private static final String GET_EMPLOYEE_DETAILS_AND_LEAVE_SUMMARY_QUERY =
+            "SELECT " +
+                    "    e.NAME AS employeeName, " +
+                    "    e.PHONE_NUMBER AS phoneNumber, " +
+                    "    e.EMAIL AS emailId, " +
+                    "    lt.TYPE_NAME AS leaveType, " +
+                    "    COALESCE(els.TOTAL_LEAVES_TAKEN, 0) AS totalLeavesTaken, " +
+                    "    lt.LIMIT_FOR_LEAVES AS leaveTypeLimit " +
+                    "FROM " +
+                    "    EMPLOYEES e " +
+                    "LEFT JOIN " +
+                    "    EMPLOYEE_LEAVE_SUMMARY els ON e.EMPLOYEE_ID = els.EMPLOYEE_ID " +
+                    "LEFT JOIN " +
+                    "    LEAVE_TYPES lt ON els.LEAVE_TYPE_ID = lt.LEAVE_TYPE_ID " +
+                    "WHERE " +
+                    "    e.EMPLOYEE_ID = ? " +
+                    "ORDER BY " +
+                    "    lt.TYPE_NAME";
 
 
     @Override
@@ -75,7 +92,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     }
 
     @Override
-    public boolean checkManager(String emailId) {
+    public boolean checkManager(String emailId) throws ServerUnavailableException {
         try (Connection connection = DbConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(CHECK_MANAGER_QUERY)) {
 
@@ -89,32 +106,24 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle exceptions (e.g., logging)
+            throw new ServerUnavailableException("unavailable to accept leave request", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+        // Handle exceptions (e.g., logging)
 
         return false;
     }
 
     @Override
-    public Employee getEmployeeByLoginId(int loginId) {
+    public Employee getEmployeeByLoginId(int loginId) throws ServerUnavailableException {
         Employee employee = null;
-
         try (Connection connection = DbConnection.getConnection();
              PreparedStatement getEmployeeIdStatement = connection.prepareStatement(GET_EMPLOYEE_BY_LOGIN_ID_QUERY)) {
-
             getEmployeeIdStatement.setInt(1, loginId);
-
-            // Execute the query to get the employee ID
             try (ResultSet employeeIdResultSet = getEmployeeIdStatement.executeQuery()) {
                 if (employeeIdResultSet.next()) {
                     int employeeId = employeeIdResultSet.getInt("EMPLOYEE_ID");
-
-                    // Use the same connection for the next query
                     try (PreparedStatement getEmployeeStatement = connection.prepareStatement(GET_EMPLOYEE_DETAILS_QUERY)) {
                         getEmployeeStatement.setInt(1, employeeId);
-
-                        // Execute the query to get the employee details
                         try (ResultSet employeeResultSet = getEmployeeStatement.executeQuery()) {
                             if (employeeResultSet.next()) {
                                 employee = new Employee();
@@ -132,15 +141,15 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle exceptions (e.g., logging)
+            throw new ServerUnavailableException("unavailable to accept leave request", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+
 
         return employee;
     }
 
     @Override
-    public List<Integer> getEmpIdUnderManager(int managerId) {
+    public List<Integer> getEmpIdUnderManager(int managerId) throws ServerUnavailableException {
         List<Integer> employeeIds = new ArrayList<>();
         try (Connection connection = DbConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_EMPLOYEE_IDS_UNDER_MANAGER_QUERY)) {
@@ -151,49 +160,91 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle exceptions (e.g., logging)
+            throw new ServerUnavailableException("unavailable to accept leave request", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
         return employeeIds;
     }
 
     @Override
-    public EmployeeManager getEmployeeManagerDetails(int employeeId) {
-            EmployeeManager employeeManager = null;
+    public EmployeeManager getEmployeeManagerDetails(int employeeId) throws ServerUnavailableException {
+        EmployeeManager employeeManager = null;
 
-            try (Connection connection = DbConnection.getConnection();
-                 PreparedStatement preparedStatement = connection.prepareStatement(GET_EMPLOYEE_MANAGER_DETAILS_QUERY)) {
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_EMPLOYEE_MANAGER_DETAILS_QUERY)) {
 
-                preparedStatement.setInt(1, employeeId);
+            preparedStatement.setInt(1, employeeId);
 
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        employeeManager = new EmployeeManager();
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    employeeManager = new EmployeeManager();
 
-                        // Employee details
-                        employeeManager.setEmployeeId(resultSet.getInt("EMPLOYEE_ID"));
-                        employeeManager.setEmpName(resultSet.getString("NAME"));
-                        employeeManager.setEmail(resultSet.getString("EMAIL"));
-                        employeeManager.setDateOfBirth(resultSet.getDate("DATE_OF_BIRTH").toLocalDate());
-                        employeeManager.setPhoneNumber(resultSet.getLong("PHONE_NUMBER"));
-                        employeeManager.setManagerId(resultSet.getInt("MANAGER_ID"));
-                        employeeManager.setGender(resultSet.getString("GENDER"));
+                    // Employee details
+                    employeeManager.setEmployeeId(resultSet.getInt("EMPLOYEE_ID"));
+                    employeeManager.setEmpName(resultSet.getString("NAME"));
+                    employeeManager.setEmail(resultSet.getString("EMAIL"));
+                    employeeManager.setDateOfBirth(resultSet.getDate("DATE_OF_BIRTH").toLocalDate());
+                    employeeManager.setPhoneNumber(resultSet.getLong("PHONE_NUMBER"));
+                    employeeManager.setManagerId(resultSet.getInt("MANAGER_ID"));
+                    employeeManager.setGender(resultSet.getString("GENDER"));
 
-                        // Manager details
-                        employeeManager.setManagerName(resultSet.getString("MANAGER_NAME"));
-                        employeeManager.setManagerEmail(resultSet.getString("MANAGER_EMAIL"));
-                        employeeManager.setManagerDateOfBirth(resultSet.getDate("MANAGER_DATE_OF_BIRTH").toLocalDate());
-                        employeeManager.setManagerPhoneNumber(resultSet.getLong("MANAGER_PHONE_NUMBER"));
-                        employeeManager.setManagerGender(resultSet.getString("MANAGER_GENDER"));
-                    }
+                    // Manager details
+                    employeeManager.setManagerName(resultSet.getString("MANAGER_NAME"));
+                    employeeManager.setManagerEmail(resultSet.getString("MANAGER_EMAIL"));
+                    employeeManager.setManagerDateOfBirth(resultSet.getDate("MANAGER_DATE_OF_BIRTH").toLocalDate());
+                    employeeManager.setManagerPhoneNumber(resultSet.getLong("MANAGER_PHONE_NUMBER"));
+                    employeeManager.setManagerGender(resultSet.getString("MANAGER_GENDER"));
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                // Handle exceptions (e.g., logging)
             }
-
-            return employeeManager;
+        } catch (SQLException e) {
+            throw new ServerUnavailableException("unavailable to accept leave request", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
+        return employeeManager;
     }
+
+    @Override
+    public EmployeeLeave getEmployeeLeaveDetailsAndLeaveSummary(int empId) throws ServerUnavailableException {
+        EmployeeLeave employeeLeave = new EmployeeLeave();
+        List<EmployeeLeaveSummary> employeeLeaveSummaries = new ArrayList<>();
+
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_EMPLOYEE_DETAILS_AND_LEAVE_SUMMARY_QUERY)) {
+
+            preparedStatement.setInt(1, empId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int totalLeavesTaken = resultSet.getInt("totalLeavesTaken");
+                    int leaveTypeLimit = resultSet.getInt("leaveTypeLimit");
+                    int pendingLeaves = leaveTypeLimit - totalLeavesTaken;
+
+                    // Setting employee details (only set once)
+                    if (employeeLeave.getEmpName() == null) {
+                        employeeLeave.setEmpName(resultSet.getString("employeeName"));
+                        employeeLeave.setPhoneNumber(resultSet.getLong("phoneNumber")); // Make sure PHONE_NUMBER is of type Long in your DB
+                        employeeLeave.setEmail(resultSet.getString("emailId"));
+                    }
+
+                    // Create and set EmployeeLeaveSummary
+                    EmployeeLeaveSummary employeeLeaveSummary = new EmployeeLeaveSummary();
+                    employeeLeaveSummary.setLeaveType(resultSet.getString("leaveType"));
+                    employeeLeaveSummary.setTotalLeavesTaken(totalLeavesTaken);
+                    employeeLeaveSummary.setTotalAllocatedLeaves(leaveTypeLimit);
+                    employeeLeaveSummary.setPendingLeaves(pendingLeaves);
+
+                    employeeLeaveSummaries.add(employeeLeaveSummary);
+                }
+
+                employeeLeave.setEmployeeLeaveSummaries(employeeLeaveSummaries);
+            }
+
+        } catch (SQLException e) {
+            // Adjust exception handling as needed
+            throw new ServerUnavailableException("Unable to fetch employee leave details", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+
+        return employeeLeave;
+    }
+
+}
 

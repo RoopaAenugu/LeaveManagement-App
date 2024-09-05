@@ -1,7 +1,9 @@
 package com.wavemaker.leavemanagement.service.impl;
 
+import com.wavemaker.leavemanagement.exception.ServerUnavailableException;
 import com.wavemaker.leavemanagement.factory.EmployeeRepositoryGlobalInstance;
 import com.wavemaker.leavemanagement.model.Employee;
+import com.wavemaker.leavemanagement.model.EmployeeLeave;
 import com.wavemaker.leavemanagement.model.EmployeeManager;
 import com.wavemaker.leavemanagement.model.LeaveRequest;
 import com.wavemaker.leavemanagement.repository.EmployeeLeaveRepository;
@@ -27,22 +29,27 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public boolean checkManager(String emailId) {
+    public boolean checkManager(String emailId) throws ServerUnavailableException {
       return  employeeRepository.checkManager(emailId);
     }
 
     @Override
-    public Employee getEmployeeByLoginId(int loginId) {
+    public Employee getEmployeeByLoginId(int loginId) throws ServerUnavailableException {
         return employeeRepository.getEmployeeByLoginId(loginId);
     }
     @Override
-    public List<Integer> getEmpIdUnderManager(int managerId) {
+    public List<Integer> getEmpIdUnderManager(int managerId) throws ServerUnavailableException {
         return employeeRepository.getEmpIdUnderManager(managerId);
     }
 
     @Override
-    public EmployeeManager getEmployeeManagerDetails(int employeeId) {
+    public EmployeeManager getEmployeeManagerDetails(int employeeId) throws ServerUnavailableException {
         return employeeRepository.getEmployeeManagerDetails(employeeId);
 
+    }
+
+    @Override
+    public EmployeeLeave getEmployeeDetailsAndLeaveSummary(int empId) throws ServerUnavailableException {
+        return employeeRepository.getEmployeeLeaveDetailsAndLeaveSummary(empId);
     }
 }

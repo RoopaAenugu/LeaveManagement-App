@@ -2,6 +2,7 @@ package com.wavemaker.leavemanagement.repository.impl;
 
 import com.wavemaker.leavemanagement.exception.ServerUnavailableException;
 import com.wavemaker.leavemanagement.model.EmployeeLeaveSummary;
+import com.wavemaker.leavemanagement.model.Holiday;
 import com.wavemaker.leavemanagement.repository.EmployeeLeaveSummaryRepository;
 import com.wavemaker.leavemanagement.util.DateUtil;
 import com.wavemaker.leavemanagement.util.DbConnection;
@@ -85,6 +86,12 @@ public class EmployeeLeaveSummaryRepositoryImpl implements EmployeeLeaveSummaryR
                     "AND LEAVE_TYPE_ID = ? " +
                     "AND FROM_DATE >= '2024-04-01' " +
                     "AND TO_DATE <= '2025-03-31'";
+    private static final String SELECT_PERSONAL_HOLIDAYS_QUERY =
+            "SELECT LR.FROM_DATE, LR.TO_DATE, LT.TYPE_NAME, LR.REASON " +
+                    "FROM LEAVE_REQUEST AS LR " +
+                    "JOIN LEAVE_TYPES AS LT ON LR.LEAVE_TYPE_ID = LT.LEAVE_TYPE_ID " +
+                    "WHERE LR.EMPLOYEE_ID = ? " +
+                    "AND LR.STATUS = 'APPROVED'";
 
     @Override
     public List<EmployeeLeaveSummary> getEmployeeLeaveSummaryByEmpId(int employeeId) throws ServerUnavailableException {
@@ -179,85 +186,52 @@ public class EmployeeLeaveSummaryRepositoryImpl implements EmployeeLeaveSummaryR
     }
 
     @Override
-    public EmployeeLeaveSummary addEmployeeLeaveSummary(EmployeeLeaveSummary employeeLeaveSummary) throws ServerUnavailableException {
-        logger.debug("Adding or updating leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
-        try (Connection connection = DbConnection.getConnection()) {
-            // Check if the record exists
-            boolean recordExists = checkIfRecordExists(employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), connection);
+    public List<Holiday> getPersonalHolidays(int employeeId) throws ServerUnavailableException {
+        List<Holiday> holidays = new ArrayList<>();
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PERSONAL_HOLIDAYS_QUERY)) {
+            preparedStatement.setInt(1, employeeId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            // Calculate total leaves taken
-            int totalLeavesTaken = getTotalLeavesTaken(employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), connection);
+            while (resultSet.next()) {
+                String holidayName = resultSet.getString("TYPE_NAME");
+                Date holidayStartDate = resultSet.getDate("FROM_DATE");
+                Date holidayEndDate = resultSet.getDate("TO_DATE");
 
-            // Calculate pending leaves
-            int pendingLeaves = employeeLeaveSummary.getTotalAllocatedLeaves() - totalLeavesTaken;
-
-            if (recordExists) {
-                // Update the existing record
-                try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EMPLOYEE_LEAVE_SUMMARY_QUERY)) {
-                    preparedStatement.setInt(1, totalLeavesTaken);
-                    preparedStatement.setInt(2, pendingLeaves);
-                    preparedStatement.setInt(3, employeeLeaveSummary.getEmployeeId());
-                    preparedStatement.setInt(4, employeeLeaveSummary.getLeaveTypeId());
-
-                    logger.trace("Executing update query: {}", UPDATE_EMPLOYEE_LEAVE_SUMMARY_QUERY);
-                    int rowsAffected = preparedStatement.executeUpdate();
-
-                    if (rowsAffected > 0) {
-                        logger.debug("Successfully updated leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
-                    } else {
-                        logger.error("Failed to update leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
-                        throw new ServerUnavailableException("Failed to update employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    }
-                } catch (SQLException e) {
-                    logger.error("SQL exception while updating leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), e);
-                    throw new ServerUnavailableException("Server is unavailable to update employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                }
-
-            } else {
-                // Insert the new record
-                try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_EMPLOYEE_LEAVE_SUMMARY_QUERY)) {
-                    preparedStatement.setInt(1, employeeLeaveSummary.getEmployeeId());
-                    preparedStatement.setInt(2, employeeLeaveSummary.getLeaveTypeId());
-                    preparedStatement.setInt(3, pendingLeaves);
-                    preparedStatement.setInt(4, totalLeavesTaken);
-                    preparedStatement.setString(5, employeeLeaveSummary.getLeaveType());
-
-                    logger.trace("Executing insert query: {}", INSERT_EMPLOYEE_LEAVE_SUMMARY_QUERY);
-                    int rowsAffected = preparedStatement.executeUpdate();
-
-                    if (rowsAffected > 0) {
-                        logger.debug("Successfully inserted leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
-                    } else {
-                        logger.error("Failed to insert leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
-                        throw new ServerUnavailableException("Failed to insert employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    }
-                } catch (SQLException e) {
-                    logger.error("SQL exception while inserting leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), e);
-                    throw new ServerUnavailableException("Server is unavailable to insert employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                }
+                Holiday holiday = new Holiday();
+                holiday.setHolidayName(holidayName);
+                holiday.setHolidayStartDate(holidayStartDate.toLocalDate());
+                holiday.setHolidayEndDate(holidayEndDate.toLocalDate());// Assuming you want to return date as a String
+                holiday.setReason(resultSet.getString("REASON"));
+                holidays.add(holiday);
             }
-
         } catch (SQLException e) {
-            logger.error("Database connection error while adding or updating leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), e);
-            throw new ServerUnavailableException("Server is unavailable to add or update employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ServerUnavailableException("server is unavailable to fetch holidays", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+
+            // Handle exceptions (e.g., logging)
         }
 
-        return employeeLeaveSummary;
-    }
+        return holidays;
 
-    @Override
-    public boolean updateEmployeeLeaveSummary(EmployeeLeaveSummary employeeLeaveSummary) throws ServerUnavailableException {
-        logger.debug("Updating leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
-
-        try (Connection connection = DbConnection.getConnection()) {
-            // Calculate the total leaves taken
-            int totalLeavesTaken = getTotalLeavesTaken(employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), connection);
-
-            // Calculate pending leaves
-            int pendingLeaves = employeeLeaveSummary.getTotalAllocatedLeaves() - totalLeavesTaken;
+}
 
 
+@Override
+public EmployeeLeaveSummary addEmployeeLeaveSummary(EmployeeLeaveSummary employeeLeaveSummary) throws ServerUnavailableException {
+    logger.debug("Adding or updating leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
+    try (Connection connection = DbConnection.getConnection()) {
+        // Check if the record exists
+        boolean recordExists = checkIfRecordExists(employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), connection);
 
+        // Calculate total leaves taken
+        int totalLeavesTaken = getTotalLeavesTaken(employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), connection);
+
+        // Calculate pending leaves
+        int pendingLeaves = employeeLeaveSummary.getTotalAllocatedLeaves() - totalLeavesTaken;
+
+        if (recordExists) {
+            // Update the existing record
             try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EMPLOYEE_LEAVE_SUMMARY_QUERY)) {
                 preparedStatement.setInt(1, totalLeavesTaken);
                 preparedStatement.setInt(2, pendingLeaves);
@@ -269,50 +243,114 @@ public class EmployeeLeaveSummaryRepositoryImpl implements EmployeeLeaveSummaryR
 
                 if (rowsAffected > 0) {
                     logger.debug("Successfully updated leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
-                    return true;  // Successfully updated
                 } else {
                     logger.error("Failed to update leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
                     throw new ServerUnavailableException("Failed to update employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
-
             } catch (SQLException e) {
                 logger.error("SQL exception while updating leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), e);
                 throw new ServerUnavailableException("Server is unavailable to update employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
 
+        } else {
+            // Insert the new record
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_EMPLOYEE_LEAVE_SUMMARY_QUERY)) {
+                preparedStatement.setInt(1, employeeLeaveSummary.getEmployeeId());
+                preparedStatement.setInt(2, employeeLeaveSummary.getLeaveTypeId());
+                preparedStatement.setInt(3, pendingLeaves);
+                preparedStatement.setInt(4, totalLeavesTaken);
+                preparedStatement.setString(5, employeeLeaveSummary.getLeaveType());
+
+                logger.trace("Executing insert query: {}", INSERT_EMPLOYEE_LEAVE_SUMMARY_QUERY);
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    logger.debug("Successfully inserted leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
+                } else {
+                    logger.error("Failed to insert leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
+                    throw new ServerUnavailableException("Failed to insert employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            } catch (SQLException e) {
+                logger.error("SQL exception while inserting leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), e);
+                throw new ServerUnavailableException("Server is unavailable to insert employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+
+    } catch (SQLException e) {
+        logger.error("Database connection error while adding or updating leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), e);
+        throw new ServerUnavailableException("Server is unavailable to add or update employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    return employeeLeaveSummary;
+}
+
+@Override
+public boolean updateEmployeeLeaveSummary(EmployeeLeaveSummary employeeLeaveSummary) throws ServerUnavailableException {
+    logger.debug("Updating leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
+
+    try (Connection connection = DbConnection.getConnection()) {
+        // Calculate the total leaves taken
+        int totalLeavesTaken = getTotalLeavesTaken(employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), connection);
+
+        // Calculate pending leaves
+        int pendingLeaves = employeeLeaveSummary.getTotalAllocatedLeaves() - totalLeavesTaken;
+
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EMPLOYEE_LEAVE_SUMMARY_QUERY)) {
+            preparedStatement.setInt(1, totalLeavesTaken);
+            preparedStatement.setInt(2, pendingLeaves);
+            preparedStatement.setInt(3, employeeLeaveSummary.getEmployeeId());
+            preparedStatement.setInt(4, employeeLeaveSummary.getLeaveTypeId());
+
+            logger.trace("Executing update query: {}", UPDATE_EMPLOYEE_LEAVE_SUMMARY_QUERY);
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                logger.debug("Successfully updated leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
+                return true;  // Successfully updated
+            } else {
+                logger.error("Failed to update leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId());
+                throw new ServerUnavailableException("Failed to update employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+
         } catch (SQLException e) {
-            logger.error("Database connection error while updating leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), e);
+            logger.error("SQL exception while updating leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), e);
             throw new ServerUnavailableException("Server is unavailable to update employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+
+    } catch (SQLException e) {
+        logger.error("Database connection error while updating leave summary for Employee ID: {}, Leave Type ID: {}", employeeLeaveSummary.getEmployeeId(), employeeLeaveSummary.getLeaveTypeId(), e);
+        throw new ServerUnavailableException("Server is unavailable to update employee leave summary", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
+}
 
-    private boolean checkIfRecordExists(int employeeId, int leaveTypeId, Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_EMPLOYEE_LEAVE_SUMMARY_EXIST_QUERY)) {
-            preparedStatement.setInt(1, employeeId);
-            preparedStatement.setInt(2, leaveTypeId);
+private boolean checkIfRecordExists(int employeeId, int leaveTypeId, Connection connection) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_EMPLOYEE_LEAVE_SUMMARY_EXIST_QUERY)) {
+        preparedStatement.setInt(1, employeeId);
+        preparedStatement.setInt(2, leaveTypeId);
 
-            try (ResultSet rs = preparedStatement.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
+        try (ResultSet rs = preparedStatement.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
             }
         }
-        return false;
     }
+    return false;
+}
 
-    private int getTotalLeavesTaken(int employeeId, int leaveTypeId, Connection connection) throws SQLException {
-        int totalLeavesTaken = 0;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(COUNT_APPROVED_LEAVES_BY_TYPE_QUERY)) {
-            preparedStatement.setInt(1, employeeId);
-            preparedStatement.setInt(2, leaveTypeId);
+private int getTotalLeavesTaken(int employeeId, int leaveTypeId, Connection connection) throws SQLException {
+    int totalLeavesTaken = 0;
+    try (PreparedStatement preparedStatement = connection.prepareStatement(COUNT_APPROVED_LEAVES_BY_TYPE_QUERY)) {
+        preparedStatement.setInt(1, employeeId);
+        preparedStatement.setInt(2, leaveTypeId);
 
-            try (ResultSet rs = preparedStatement.executeQuery()) {
-                while (rs.next()) {
-                    // Calculate total leaves taken by summing up the days
-                    totalLeavesTaken += DateUtil.calculateTotalDaysExcludingWeekends(rs.getDate("FROM_DATE"), rs.getDate("TO_DATE"));
-                }
+        try (ResultSet rs = preparedStatement.executeQuery()) {
+            while (rs.next()) {
+                // Calculate total leaves taken by summing up the days
+                totalLeavesTaken += DateUtil.calculateTotalDaysExcludingWeekends(rs.getDate("FROM_DATE"), rs.getDate("TO_DATE"));
             }
         }
-        return totalLeavesTaken;
     }
+    return totalLeavesTaken;
+}
 }

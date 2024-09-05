@@ -44,7 +44,6 @@ public class LoginCredentialServlet extends HttpServlet {
                 throws IOException, ServletException {
             String emailId = request.getParameter("emailId");
             String password = request.getParameter("password");
-
             if (emailId == null || password == null) {
                 writeResponse(response, gson.toJson("Missing required parameters."));
                 return;
@@ -55,6 +54,7 @@ public class LoginCredentialServlet extends HttpServlet {
             loginCredential.setPassword(password);
 
             try {
+
                 int loginId = loginCredentialService.isValidate(loginCredential);
                 if (loginId != -1) {
                     String cookieValue = UUID.randomUUID().toString();

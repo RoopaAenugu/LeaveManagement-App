@@ -19,6 +19,7 @@
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
             <scope>test</scope>
+
         </dependency>
         <!--log dependencies -->
         <!-- SLF4j API for logging abstraction -->
@@ -94,10 +95,48 @@
             <artifactId>jackson-annotations</artifactId>
             <version>2.9.8</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>5.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.24.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.5.0</version>
+        </dependency>
 
 
     </dependencies>
     <build>
         <finalName>LeaveManagementApp</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>9</source>
+                    <target>9</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
