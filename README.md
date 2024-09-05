@@ -79,7 +79,9 @@ Employee Profile Page :
 
 
 Team Leave Summary
-<img width="940" alt="TeamLeaveSummary" src="https://github.com/user-attachments/assets/2db39a98-433e-4412-abba-c59fd2f95b5c">
+
+<img width="919" alt="TeamLeaveSummary" src="https://github.com/user-attachments/assets/b24d9deb-0e2d-4a18-bdc8-4e7b861828aa">
+
 
 Team Leave Requests
 <img width="941" alt="TeamLeaveRequest" src="https://github.com/user-attachments/assets/40452d64-a616-44f9-b89f-31e3aa52822b">
